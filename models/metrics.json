@@ -1,0 +1,17 @@
+{
+    "model_name": "Deep Learning (Binary Focal Loss)",
+    "accuracy_pct": 99.9418,
+    "precision_pct": 88.75,
+    "recall_pct": 74.74,
+    "f1_score_pct": 81.14,
+    "roc_auc": 0.9436,
+    "auprc": 0.793,
+    "true_negatives": 56642,
+    "false_positives": 9,
+    "false_negatives": 24,
+    "true_positives": 71,
+    "operational_cost_dollars": 3627.0,
+    "latency_ms_per_txn": 0.001,
+    "total_test_samples": 56746,
+    "total_test_frauds": 95
+}

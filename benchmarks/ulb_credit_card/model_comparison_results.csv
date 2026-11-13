@@ -1,0 +1,7 @@
+Model,Accuracy (%),Precision (%),Recall (%),F1-Score (%),ROC-AUC,AUPRC,False Positives,False Negatives,Operational Cost ($),Latency (ms/txn)
+Logistic Regression,97.3584,5.29,87.37,9.97,0.9603,0.6716,1487,12,6261,0
+Decision Tree,98.7312,9.47,76.84,16.86,0.8428,0.4026,698,22,5394,0
+Random Forest,99.9119,71.43,78.95,75,0.9702,0.7989,30,20,3090,0.001
+XGBoost,99.7392,37.44,83.16,51.63,0.9673,0.7974,132,16,2796,0
+LightGBM,99.7233,35.51,80,49.19,0.9534,0.771,138,19,3264,0.001
+Deep Learning (Focal Loss),99.9418,88.75,74.74,81.14,0.9436,0.793,9,24,3627,0.001

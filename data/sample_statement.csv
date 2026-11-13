@@ -1,0 +1,11 @@
+date,merchant,category,amount,channel
+2026-10-28,Blue Bottle Coffee,dining,4.75,contactless
+2026-10-28,Trader Joe's Groceries,grocery,64.20,in_store_chip
+2026-10-29,Shell Gas Station,transport,42.00,in_store_chip
+2026-10-29,Netflix Subscription,general,15.99,online
+2026-10-30,Target Department Store,clothing,78.50,in_store_chip
+2026-10-31,Subway Restaurant,dining,11.40,contactless
+2026-11-01,Binance Intl Crypto Exchange,crypto,1850.00,online
+2026-11-01,Night ATM-Midnight Cash Out,general,400.00,atm
+2026-11-02,Apple Store Online,electronics,1299.00,online
+

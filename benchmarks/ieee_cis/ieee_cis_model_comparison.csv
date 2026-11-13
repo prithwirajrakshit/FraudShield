@@ -1,0 +1,7 @@
+Dataset,Model,Accuracy (%),Precision (%),Recall (%),F1-Score (%),ROC-AUC,AUPRC,False Positives,False Negatives,Operational Cost ($),Latency (ms/txn)
+IEEE-CIS Fraud,Logistic Regression,96.8958,81.46,14.64,24.82,0.8256,0.3309,28,717,107634.0,0.0
+IEEE-CIS Fraud,Decision Tree,97.1875,71.21,32.98,45.08,0.8181,0.3815,112,563,84786.0,0.0
+IEEE-CIS Fraud,Random Forest,97.4667,92.65,30.0,45.32,0.8913,0.5524,20,588,88260.0,0.002
+IEEE-CIS Fraud,XGBoost,97.7083,87.96,40.0,54.99,0.9201,0.6203,46,504,75738.0,0.001
+IEEE-CIS Fraud,LightGBM,97.7375,88.37,40.71,55.75,0.9165,0.6131,45,498,74835.0,0.001
+IEEE-CIS Fraud,Deep Learning (Focal Loss),97.0375,77.92,21.43,33.61,0.8619,0.4296,51,660,99153.0,0.001
