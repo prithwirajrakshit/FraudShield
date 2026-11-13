@@ -23,7 +23,8 @@ class BinaryFocalLoss(nn.Module):
     def forward(self, logits: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
         bce = F.binary_cross_entropy_with_logits(logits, targets, reduction='none')
         p_t = torch.exp(-bce)
-        focal_weight = self.alpha * torch.pow(1.0 - p_t, self.gamma)
+        alpha_t = targets * self.alpha + (1.0 - targets) * (1.0 - self.alpha)
+        focal_weight = alpha_t * torch.pow(1.0 - p_t, self.gamma)
         loss = focal_weight * bce
         return loss.mean()
 

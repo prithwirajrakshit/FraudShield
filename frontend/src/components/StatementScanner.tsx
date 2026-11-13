@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { UploadCloud, FileText, CheckCircle2, AlertTriangle, ShieldAlert, Sparkles, RefreshCw, Terminal, ScanLine, Lock, Eye, EyeOff, KeyRound } from "lucide-react";
+import { Upload, FileText, CheckCircle2, AlertTriangle, ShieldAlert, Sparkles, RefreshCw, Lock, Eye, EyeOff, KeyRound } from "lucide-react";
 import { StatementScanResponse, uploadStatement } from "../lib/api";
 
 export function StatementScanner() {
@@ -90,52 +90,31 @@ export function StatementScanner() {
   return (
     <div className="space-y-6">
       
-      {/* Upload Zone with Laser Scanning Aesthetic */}
-      <div className="relative overflow-hidden rounded-2xl border-2 border-dashed border-slate-700/80 hover:border-cyan-500/80 glass-panel p-8 text-center transition-all duration-300">
-        
-        {/* Animated Laser Beam when Scanning */}
-        {isLoading && (
-          <div className="absolute inset-x-0 h-1 bg-gradient-to-r from-transparent via-cyan-400 to-transparent shadow-lg shadow-cyan-400/80 laser-beam z-20"></div>
-        )}
-
-        <div className="relative z-10 max-w-xl mx-auto">
-          <div className="h-14 w-14 rounded-2xl bg-cyan-950/70 border border-cyan-800/80 flex items-center justify-center text-cyan-400 mx-auto mb-3 shadow-lg shadow-cyan-950/40">
-            <ScanLine className="h-7 w-7 text-cyan-400" />
+      {/* Upload Zone */}
+      <div className="surface-card p-8 text-center border-2 border-dashed border-[var(--border-subtle)] hover:border-[var(--border-strong)] transition-colors">
+        <div className="max-w-xl mx-auto space-y-4">
+          
+          <div className="h-12 w-12 rounded-xl bg-[var(--bg-card-raised)] border border-[var(--border-strong)] flex items-center justify-center text-[var(--accent-light)] mx-auto">
+            <Upload className="h-6 w-6 stroke-[2]" />
           </div>
 
-          <h3 className="text-lg font-mono font-bold tracking-tight text-white">
-            Bank Statement Security Scanner
-          </h3>
-          <p className="text-xs text-slate-400 mt-1 mb-5 leading-relaxed">
-            Upload your 1-month bank statement (supports <b>.CSV</b>, <b>.ZIP</b>, <b>.XLSX</b>, and <b>.PDF</b>). Supports password-protected statements.
-          </p>
+          <div>
+            <h3 className="text-base font-bold text-white font-sans">
+              Upload bank statement
+            </h3>
+            <p className="text-xs text-[var(--text-secondary)] mt-1">
+              Supports CSV, PDF, Excel (.xlsx, .xls), and encrypted ZIP files up to 25 MB.
+            </p>
+          </div>
 
-          {/* Optional Password Input Field for Protected Statements */}
-          <div className={`mb-5 p-4 rounded-xl border text-left transition-all ${
-            passwordErrorType === "required"
-              ? "border-amber-500/80 bg-amber-950/20 shadow-lg shadow-amber-950/30"
-              : passwordErrorType === "incorrect"
-              ? "border-rose-500/80 bg-rose-950/20 shadow-lg shadow-rose-950/30"
-              : "border-slate-800 bg-slate-950/80"
-          }`}>
+          {/* Password Input for Protected Statements */}
+          <div className="p-3.5 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-card-raised)] text-left">
             <div className="flex items-center justify-between mb-1.5">
-              <label className="text-xs font-mono font-bold text-slate-300 flex items-center gap-1.5">
-                <Lock className={`h-3.5 w-3.5 ${
-                  passwordErrorType === "required" ? "text-amber-400" : passwordErrorType === "incorrect" ? "text-rose-400" : "text-cyan-400"
-                }`} />
-                <span>Statement Password (If Protected)</span>
+              <label className="text-xs font-medium text-[var(--text-secondary)] flex items-center gap-1.5">
+                <Lock className="h-3.5 w-3.5 text-[var(--text-muted)]" />
+                <span>Statement password (if encrypted)</span>
               </label>
-              {passwordErrorType ? (
-                <span className={`text-[10px] font-mono uppercase px-2 py-0.5 rounded font-bold border ${
-                  passwordErrorType === "required"
-                    ? "bg-amber-950 text-amber-300 border-amber-600/50"
-                    : "bg-rose-950 text-rose-300 border-rose-600/50"
-                }`}>
-                  {passwordErrorType === "required" ? "Password Required" : "Incorrect Password"}
-                </span>
-              ) : (
-                <span className="text-[10px] font-mono text-slate-500 uppercase">Optional</span>
-              )}
+              <span className="text-[10px] text-[var(--text-muted)]">Optional</span>
             </div>
             
             <div className="relative">
@@ -147,31 +126,24 @@ export function StatementScanner() {
                   if (passwordErrorType) setPasswordErrorType(null);
                   if (error) setError(null);
                 }}
-                placeholder="Enter password (e.g., DOB: DDMMYYYY, PAN, or Mobile No)"
-                className={`w-full px-3.5 py-2.5 pr-10 text-xs font-mono rounded-lg border bg-slate-900 text-white placeholder-slate-500 focus:outline-hidden ${
-                  passwordErrorType === "required"
-                    ? "border-amber-500 ring-1 ring-amber-500/30"
-                    : passwordErrorType === "incorrect"
-                    ? "border-rose-500 ring-1 ring-rose-500/30"
-                    : "border-slate-800 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500/20"
-                }`}
+                placeholder="e.g. DOB (DDMMYYYY), PAN, or mobile number"
+                className="w-full px-3 py-2 pr-10 text-xs rounded-md border border-[var(--border-subtle)] bg-[var(--bg-canvas)] text-white placeholder-[var(--text-muted)] focus:border-[var(--accent-light)] focus:outline-hidden"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-200 cursor-pointer"
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-[var(--text-muted)] hover:text-white cursor-pointer"
+                aria-label={showPassword ? "Hide password" : "Show password"}
               >
                 {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>
             </div>
-            <p className="text-[10px] text-slate-500 mt-1.5 font-mono">
-              🔒 Decryption runs 100% in-memory. Passwords and statement data are never saved to disk.
-            </p>
           </div>
 
-          <div className="flex flex-wrap items-center justify-center gap-3">
-            <label className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white font-mono font-bold text-xs uppercase tracking-wider shadow-lg shadow-cyan-500/25 border border-cyan-400/40 cursor-pointer transition-all">
-              Choose Statement File
+          {/* Action Buttons */}
+          <div className="flex flex-wrap items-center justify-center gap-2.5 pt-1">
+            <label className="px-4 py-2 rounded-lg bg-[var(--accent-primary)] hover:bg-[var(--accent-hover)] text-white font-medium text-xs transition-colors cursor-pointer border border-[var(--accent-light)]/20 shadow-xs">
+              Select statement file
               <input
                 type="file"
                 accept=".csv,.zip,.xlsx,.xls,.pdf"
@@ -183,45 +155,47 @@ export function StatementScanner() {
             <button
               type="button"
               onClick={loadSampleStatement}
-              className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 hover:bg-slate-800 hover:border-cyan-500/50 text-slate-200 font-mono font-semibold text-xs tracking-wider transition-all cursor-pointer shadow-xs"
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[var(--bg-card-raised)] border border-[var(--border-subtle)] hover:border-[var(--border-strong)] text-[var(--text-secondary)] hover:text-white font-medium text-xs transition-colors cursor-pointer"
             >
-              <Sparkles className="h-3.5 w-3.5 text-cyan-400" />
-              <span>Load Preset Demo</span>
+              <Sparkles className="h-3.5 w-3.5 text-[var(--accent-light)]" />
+              <span>Load demo statement</span>
             </button>
           </div>
 
           {file && (
-            <div className="mt-4 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-mono text-cyan-300">
-              <FileText className="h-4 w-4 text-cyan-400" />
+            <div className="mt-2 inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-[var(--bg-card-raised)] border border-[var(--border-subtle)] text-xs text-[var(--accent-light)] font-mono">
+              <FileText className="h-3.5 w-3.5" />
               <span>{file.name}</span>
               <button
+                type="button"
                 onClick={() => runScan(file)}
                 disabled={isLoading}
-                className="ml-2 font-bold text-white hover:text-cyan-300 underline cursor-pointer"
+                className="ml-2 font-semibold text-white hover:underline cursor-pointer"
               >
-                {isLoading ? "Decrypting & Scanning..." : "Unlock & Scan Now"}
+                {isLoading ? "Scanning..." : "Scan now"}
               </button>
             </div>
           )}
 
           {error && (
-            <div className="mt-4 p-3 rounded-xl border border-rose-500/40 bg-rose-950/40 text-xs font-mono text-rose-300 flex items-start gap-2.5 text-left">
+            <div className="p-3 rounded-lg border border-[var(--color-danger-border)] bg-[var(--color-danger-bg)] text-xs text-rose-300 flex items-start gap-2.5 text-left">
               <KeyRound className="h-4 w-4 text-rose-400 shrink-0 mt-0.5" />
               <div>
-                <p className="font-bold">Authentication / File Notice:</p>
+                <p className="font-semibold">Processing notice</p>
                 <p className="text-rose-200 mt-0.5">{error}</p>
               </div>
             </div>
           )}
+
         </div>
       </div>
 
       {/* Loading Readout */}
       {isLoading && (
-        <div className="py-10 text-center space-y-3 glass-panel rounded-2xl border border-slate-800">
-          <RefreshCw className="h-7 w-7 text-cyan-400 animate-spin mx-auto" />
-          <p className="text-xs font-mono text-cyan-300 uppercase tracking-widest">
-            Decrypting & Scanning Transaction Embeddings Through Deep Focal Network...
+        <div className="py-8 text-center space-y-2 surface-card border border-[var(--border-subtle)]">
+          <RefreshCw className="h-5 w-5 text-[var(--accent-light)] animate-spin mx-auto" />
+          <p className="text-xs text-[var(--text-secondary)]">
+            Scanning statement against fraud detection model...
           </p>
         </div>
       )}
@@ -230,112 +204,111 @@ export function StatementScanner() {
       {scanResult && !isLoading && (
         <div className="space-y-6">
           
-          {/* Summary Telemetry Cards */}
+          {/* Summary Stat Cards */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             
-            <div className="p-4 rounded-xl border border-slate-800 bg-slate-950/80 glass-panel">
-              <span className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-widest">
-                Scanned Volume
+            <div className="surface-card p-4 border border-[var(--border-subtle)]">
+              <span className="text-xs text-[var(--text-muted)] font-medium">
+                Scanned transactions
               </span>
-              <p className="text-2xl font-black font-mono text-white mt-1">
+              <p className="text-2xl font-bold font-mono text-white mt-1">
                 {scanResult.summary.total_transactions}
               </p>
-              <span className="text-xs font-mono text-slate-400">
+              <span className="text-xs text-[var(--text-secondary)] font-mono">
                 ₹{scanResult.summary.total_volume_dollars.toLocaleString()} total
               </span>
             </div>
 
-            <div className="p-4 rounded-xl border border-emerald-500/30 bg-emerald-950/30 glass-panel">
-              <span className="text-[10px] font-mono font-bold text-emerald-400 uppercase tracking-widest flex items-center gap-1">
-                <CheckCircle2 className="h-3 w-3" />
+            <div className="surface-card p-4 border border-[var(--color-safe-border)] bg-[var(--color-safe-bg)]">
+              <span className="text-xs font-medium text-emerald-400 flex items-center gap-1">
+                <CheckCircle2 className="h-3.5 w-3.5" />
                 Approved
               </span>
-              <p className="text-2xl font-black font-mono text-emerald-300 mt-1">
+              <p className="text-2xl font-bold font-mono text-emerald-300 mt-1">
                 {scanResult.summary.approved_count}
               </p>
-              <span className="text-xs font-mono text-emerald-400/80">Cleared Safe</span>
+              <span className="text-xs text-emerald-400/80">Normal spending</span>
             </div>
 
-            <div className="p-4 rounded-xl border border-amber-500/30 bg-amber-950/30 glass-panel">
-              <span className="text-[10px] font-mono font-bold text-amber-400 uppercase tracking-widest flex items-center gap-1">
-                <AlertTriangle className="h-3 w-3" />
+            <div className="surface-card p-4 border border-[var(--color-warning-border)] bg-[var(--color-warning-bg)]">
+              <span className="text-xs font-medium text-amber-400 flex items-center gap-1">
+                <AlertTriangle className="h-3.5 w-3.5" />
                 Suspicious
               </span>
-              <p className="text-2xl font-black font-mono text-amber-300 mt-1">
+              <p className="text-2xl font-bold font-mono text-amber-300 mt-1">
                 {scanResult.summary.challenged_count}
               </p>
-              <span className="text-xs font-mono text-amber-400/80">OTP Challenge</span>
+              <span className="text-xs text-amber-400/80">Requires verification</span>
             </div>
 
-            <div className="p-4 rounded-xl border border-rose-500/40 bg-rose-950/30 glass-panel">
-              <span className="text-[10px] font-mono font-bold text-rose-400 uppercase tracking-widest flex items-center gap-1">
-                <ShieldAlert className="h-3 w-3" />
+            <div className="surface-card p-4 border border-[var(--color-danger-border)] bg-[var(--color-danger-bg)]">
+              <span className="text-xs font-medium text-rose-400 flex items-center gap-1">
+                <ShieldAlert className="h-3.5 w-3.5" />
                 Blocked
               </span>
-              <p className="text-2xl font-black font-mono text-rose-300 mt-1">
+              <p className="text-2xl font-bold font-mono text-rose-300 mt-1">
                 {scanResult.summary.blocked_count}
               </p>
-              <span className="text-xs font-mono text-rose-400/80">
-                ₹{scanResult.summary.flagged_volume_dollars.toLocaleString()} Protected
+              <span className="text-xs text-rose-400/80 font-mono">
+                ₹{scanResult.summary.flagged_volume_dollars.toLocaleString()} guarded
               </span>
             </div>
 
           </div>
 
-          {/* Futuristic Data Breakdown Table */}
-          <div className="rounded-2xl border border-slate-800 glass-panel overflow-hidden shadow-2xl">
-            <div className="px-6 py-4 border-b border-slate-800 flex items-center justify-between">
+          {/* Transaction Table */}
+          <div className="surface-card border border-[var(--border-subtle)] overflow-hidden">
+            <div className="px-5 py-3.5 border-b border-[var(--border-subtle)] flex items-center justify-between">
               <div>
-                <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-cyan-400 flex items-center gap-2">
-                  <Terminal className="h-4 w-4" />
-                  <span>Telemetry Audit Feed</span>
+                <h4 className="text-xs font-semibold text-white">
+                  Transaction risk audit
                 </h4>
-                <p className="text-xs text-slate-400">
-                  Individual anomaly calculations based on consumer spending profiles.
+                <p className="text-xs text-[var(--text-muted)]">
+                  Evaluated with median cardholder baseline.
                 </p>
               </div>
-              <span className={`px-3 py-1 rounded-full text-xs font-mono font-bold uppercase tracking-wider ${
+              <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium border ${
                 scanResult.summary.account_health === "Healthy"
-                  ? "bg-emerald-950 text-emerald-300 border border-emerald-500/50"
-                  : "bg-rose-950 text-rose-300 border border-rose-500/50"
+                  ? "bg-emerald-950/60 text-emerald-300 border-emerald-500/40"
+                  : "bg-rose-950/60 text-rose-300 border-rose-500/40"
               }`}>
-                Security Health: {scanResult.summary.account_health}
+                Health: {scanResult.summary.account_health}
               </span>
             </div>
 
             <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse font-mono text-xs">
+              <table className="w-full text-left border-collapse text-xs">
                 <thead>
-                  <tr className="bg-slate-900/90 text-slate-400 uppercase tracking-widest text-[10px] border-b border-slate-800">
-                    <th className="py-3 px-4">Date</th>
-                    <th className="py-3 px-4">Merchant Entity</th>
-                    <th className="py-3 px-4">Sector</th>
-                    <th className="py-3 px-4">Amount</th>
-                    <th className="py-3 px-4">Threat %</th>
-                    <th className="py-3 px-4">Decision</th>
-                    <th className="py-3 px-4">Key Anomaly Signal</th>
+                  <tr className="bg-[var(--bg-card-raised)] text-[var(--text-muted)] border-b border-[var(--border-subtle)]">
+                    <th className="py-2.5 px-4 font-medium">Date</th>
+                    <th className="py-2.5 px-4 font-medium">Description</th>
+                    <th className="py-2.5 px-4 font-medium">Category</th>
+                    <th className="py-2.5 px-4 font-medium text-right">Amount</th>
+                    <th className="py-2.5 px-4 font-medium text-right">Threat %</th>
+                    <th className="py-2.5 px-4 font-medium text-center">Status</th>
+                    <th className="py-2.5 px-4 font-medium">Reason</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/60">
+                <tbody className="divide-y divide-[var(--border-subtle)]">
                   {scanResult.transactions.map((tx) => (
-                    <tr key={tx.id} className="hover:bg-slate-800/40 transition-colors">
-                      <td className="py-3 px-4 text-slate-400 whitespace-nowrap">{tx.date}</td>
-                      <td className="py-3 px-4 font-bold text-white">{tx.description}</td>
-                      <td className="py-3 px-4 text-slate-300 capitalize">{tx.category}</td>
-                      <td className="py-3 px-4 font-bold text-cyan-300">₹{tx.amount.toFixed(2)}</td>
-                      <td className="py-3 px-4 font-black text-white">{tx.risk_score_percent}%</td>
-                      <td className="py-3 px-4">
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border ${
+                    <tr key={tx.id} className="hover:bg-[var(--bg-card-raised)]/50 transition-colors">
+                      <td className="py-2.5 px-4 text-[var(--text-muted)] font-mono whitespace-nowrap">{tx.date}</td>
+                      <td className="py-2.5 px-4 font-medium text-white">{tx.description}</td>
+                      <td className="py-2.5 px-4 text-[var(--text-secondary)] capitalize">{tx.category}</td>
+                      <td className="py-2.5 px-4 text-right font-mono font-medium text-[var(--accent-light)]">₹{tx.amount.toFixed(2)}</td>
+                      <td className="py-2.5 px-4 text-right font-mono font-semibold text-white">{tx.risk_score_percent}%</td>
+                      <td className="py-2.5 px-4 text-center">
+                        <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-semibold border ${
                           tx.status === "APPROVED"
-                            ? "bg-emerald-950/80 text-emerald-300 border-emerald-500/50"
+                            ? "bg-emerald-950/60 text-emerald-300 border-emerald-500/40"
                             : tx.status === "CHALLENGE"
-                            ? "bg-amber-950/80 text-amber-300 border-amber-500/50"
-                            : "bg-rose-950/90 text-rose-300 border-rose-500/60"
+                            ? "bg-amber-950/60 text-amber-300 border-amber-500/40"
+                            : "bg-rose-950/60 text-rose-300 border-rose-500/40"
                         }`}>
                           {tx.status}
                         </span>
                       </td>
-                      <td className="py-3 px-4 text-slate-300 max-w-xs truncate">
+                      <td className="py-2.5 px-4 text-[var(--text-secondary)] max-w-xs truncate">
                         {tx.top_reason}
                       </td>
                     </tr>
@@ -348,83 +321,77 @@ export function StatementScanner() {
         </div>
       )}
 
-      {/* Password Prompt & Error Modal Dialog for Web */}
+      {/* Password Modal Dialog */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4 animate-in fade-in duration-200">
-          <div className="w-full max-w-md rounded-2xl bg-slate-900 border border-slate-800 p-6 shadow-2xl shadow-cyan-950/40 relative">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-xs p-4">
+          <div className="w-full max-w-md rounded-xl surface-card p-6 border border-[var(--border-strong)] shadow-xl relative">
             
-            {/* Modal Icon Badge */}
-            <div className={`h-14 w-14 rounded-2xl flex items-center justify-center mx-auto mb-4 border ${
+            <div className={`h-11 w-11 rounded-lg flex items-center justify-center mx-auto mb-3 border ${
               modalType === "required"
-                ? "bg-amber-950/70 border-amber-500/50 text-amber-400 shadow-lg shadow-amber-950/40"
-                : "bg-rose-950/70 border-rose-500/50 text-rose-400 shadow-lg shadow-rose-950/40"
+                ? "bg-amber-950/60 border-amber-500/40 text-amber-400"
+                : "bg-rose-950/60 border-rose-500/40 text-rose-400"
             }`}>
               {modalType === "required" ? (
-                <KeyRound className="h-7 w-7 text-amber-400" />
+                <KeyRound className="h-5 w-5" />
               ) : (
-                <AlertTriangle className="h-7 w-7 text-rose-400" />
+                <AlertTriangle className="h-5 w-5" />
               )}
             </div>
 
-            {/* Modal Header */}
-            <h3 className="text-lg font-mono font-bold text-center text-white mb-2">
-              {modalType === "required" ? "Password-Protected Statement" : "Incorrect Statement Password"}
+            <h3 className="text-base font-bold text-center text-white mb-1">
+              {modalType === "required" ? "Password-protected statement" : "Incorrect statement password"}
             </h3>
-            <p className="text-xs text-slate-400 text-center leading-relaxed mb-4">
+            <p className="text-xs text-[var(--text-secondary)] text-center mb-4">
               {modalType === "required"
-                ? "This bank statement is encrypted with a password. Please enter your password or PIN below to decrypt and scan."
-                : "The password entered could not unlock this statement. Please verify your bank's format and re-enter."}
+                ? "This statement is encrypted. Please enter your password or PIN to decrypt."
+                : "The password entered could not unlock this statement. Please check and try again."}
             </p>
 
-            {/* Common Bank Password Formats Tip */}
-            <div className="mb-4 p-3 rounded-xl bg-slate-950 border border-slate-800 text-left">
-              <p className="text-[11px] font-mono font-bold text-cyan-400 mb-1">
-                💡 Common Bank Password Formats:
+            {/* Bank Password Formats Tip */}
+            <div className="mb-4 p-3 rounded-md bg-[var(--bg-canvas)] border border-[var(--border-subtle)] text-left">
+              <p className="text-xs font-semibold text-[var(--accent-light)] mb-1">
+                Common bank password formats:
               </p>
-              <ul className="text-[10px] text-slate-400 space-y-1 font-mono">
-                <li>• <span className="text-slate-300 font-bold">SBI / HDFC:</span> Date of Birth (DDMMYYYY) or Mobile Number</li>
-                <li>• <span className="text-slate-300 font-bold">ICICI / Axis:</span> Registered Mobile Number or PAN in UPPERCASE</li>
-                <li>• <span className="text-slate-300 font-bold">Kotak:</span> CRN Number or Date of Birth (DDMMYYYY)</li>
+              <ul className="text-xs text-[var(--text-secondary)] space-y-0.5">
+                <li>• SBI / HDFC: Date of Birth (DDMMYYYY) or registered mobile</li>
+                <li>• ICICI / Axis: Registered mobile number or PAN (uppercase)</li>
+                <li>• Kotak: CRN number or Date of Birth</li>
               </ul>
             </div>
 
-            {/* Password Input Form */}
-            <form onSubmit={handleModalSubmit} className="space-y-4">
+            {/* Password Form */}
+            <form onSubmit={handleModalSubmit} className="space-y-3">
               <div className="relative">
                 <input
                   type={modalShowPwd ? "text" : "password"}
                   value={modalPwd}
                   onChange={(e) => setModalPwd(e.target.value)}
-                  placeholder="Enter Statement Password"
+                  placeholder="Enter statement password"
                   autoFocus
-                  className="w-full px-3.5 py-2.5 pr-10 text-xs font-mono rounded-lg border border-cyan-500/80 bg-slate-950 text-white placeholder-slate-500 focus:ring-1 focus:ring-cyan-500/40 focus:outline-hidden"
+                  className="w-full px-3 py-2 pr-10 text-xs rounded-md border border-[var(--border-subtle)] bg-[var(--bg-canvas)] text-white focus:border-[var(--accent-light)] focus:outline-hidden"
                 />
                 <button
                   type="button"
                   onClick={() => setModalShowPwd(!modalShowPwd)}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-200 cursor-pointer"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-[var(--text-muted)] hover:text-white cursor-pointer"
                 >
                   {modalShowPwd ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
 
-              <div className="flex gap-2">
+              <div className="flex gap-2 pt-1">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="flex-1 py-2.5 px-4 rounded-xl border border-slate-700 bg-slate-800/60 hover:bg-slate-800 text-xs font-mono font-bold text-slate-300 transition-all cursor-pointer"
+                  className="flex-1 py-2 px-3 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-card-raised)] hover:bg-[var(--bg-card-subtle)] text-xs font-medium text-[var(--text-secondary)] transition-colors cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className={`flex-2 py-2.5 px-4 rounded-xl text-xs font-mono font-bold text-slate-950 uppercase tracking-wider transition-all cursor-pointer ${
-                    modalType === "required"
-                      ? "bg-amber-400 hover:bg-amber-300 shadow-lg shadow-amber-500/20"
-                      : "bg-cyan-400 hover:bg-cyan-300 shadow-lg shadow-cyan-500/20"
-                  }`}
+                  className="flex-1 py-2 px-3 rounded-lg bg-[var(--accent-primary)] hover:bg-[var(--accent-hover)] text-xs font-semibold text-white transition-colors cursor-pointer"
                 >
-                  {modalType === "required" ? "Unlock & Scan" : "Try Again"}
+                  {modalType === "required" ? "Unlock & scan" : "Retry"}
                 </button>
               </div>
             </form>

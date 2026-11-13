@@ -7,15 +7,17 @@ import joblib
 
 def find_dataset_path():
     candidate_paths = [
+        os.path.join("benchmarks", "ulb_credit_card", "creditcard.csv"),
+        os.path.join("..", "benchmarks", "ulb_credit_card", "creditcard.csv"),
         os.path.join("data", "creditcard.csv"),
-        os.path.join("ULB_Credit_Card_Benchmark", "creditcard.csv"),
         "creditcard.csv",
+        os.path.join("ULB_Credit_Card_Benchmark", "creditcard.csv"),
         os.path.join("..", "ULB_Credit_Card_Benchmark", "creditcard.csv")
     ]
     for p in candidate_paths:
         if os.path.exists(p):
             return p
-    raise FileNotFoundError("Could not locate creditcard.csv. Please place it in data/ or ULB_Credit_Card_Benchmark/.")
+    raise FileNotFoundError("Could not locate creditcard.csv. Please place it in benchmarks/ulb_credit_card/ or data/.")
 
 def load_and_preprocess_data(dataset_path=None, test_size=0.20, random_state=42):
     if dataset_path is None:

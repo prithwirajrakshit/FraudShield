@@ -1,4 +1,4 @@
-$root = "D:\Fraud Detection"
+$root = Split-Path -Parent $PSScriptRoot
 
 Write-Host "==========================================================" -ForegroundColor Cyan
 Write-Host " LAUNCHING FRAUDSHIELD FULL-STACK APPLICATION" -ForegroundColor Yellow

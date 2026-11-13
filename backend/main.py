@@ -22,16 +22,19 @@ app = FastAPI(
 # Enable CORS for Next.js frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000", "*"],
+    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Initialize core services
-mapper = FeatureMapper(scaler_path="models/scaler.joblib")
-predictor = FraudPredictor(model_path="models/best_focal_dnn.pt")
+# Resolve model paths relative to repo root
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+mapper = FeatureMapper(scaler_path=os.path.join(BASE_DIR, "models", "scaler.joblib"))
+predictor = FraudPredictor(model_path=os.path.join(BASE_DIR, "models", "best_focal_dnn.pt"))
 scanner = StatementScanner(mapper=mapper, predictor=predictor)
+
+MAX_FILE_SIZE = 25 * 1024 * 1024  # 25 MB limit
 
 class TransactionCheckRequest(BaseModel):
     amount: float = Field(..., gt=0, description="Transaction monetary value in currency units")
@@ -159,16 +162,27 @@ def check_transaction(req: TransactionCheckRequest):
             "security_assessment": prediction,
             "explanation": explanation
         }
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/api/scan-statement")
-async def scan_statement(
+def scan_statement(
     file: UploadFile = File(...),
     password: Optional[str] = Form(None)
 ):
     try:
-        content = await file.read()
+        content = file.file.read(MAX_FILE_SIZE + 1)
+        if len(content) > MAX_FILE_SIZE:
+            raise HTTPException(
+                status_code=413,
+                detail={
+                    "error_type": "STATEMENT_ERROR",
+                    "message": "File exceeds maximum permitted size of 25 MB.",
+                    "title": "Payload Too Large"
+                }
+            )
         scan_report = scanner.scan_file(content, filename=file.filename or "statement.csv", password=password)
         return scan_report
     except PasswordRequiredError as pe:
@@ -198,6 +212,8 @@ async def scan_statement(
                 "title": "Statement Processing Error"
             }
         )
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(
             status_code=500,

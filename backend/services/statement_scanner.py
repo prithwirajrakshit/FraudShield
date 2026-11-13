@@ -1,6 +1,7 @@
 import io
 import re
 import zipfile
+import numpy as np
 import pandas as pd
 from typing import List, Dict, Any, Optional, Tuple
 
@@ -413,32 +414,7 @@ class StatementScanner:
         lower_name = filename.lower()
         pwd_bytes = password.encode("utf-8") if password else None
 
-        # 1. Password-Protected ZIP archive
-        if lower_name.endswith(".zip") or file_bytes[:4] == b"PK\x03\x04":
-            try:
-                with pyzipper.AESZipFile(io.BytesIO(file_bytes)) as z:
-                    if pwd_bytes:
-                        z.setpassword(pwd_bytes)
-                    target_file = None
-                    for item in z.infolist():
-                        if any(item.filename.lower().endswith(ext) for ext in [".xlsx", ".xls", ".csv", ".txt"]):
-                            target_file = item.filename
-                            break
-                    if not target_file:
-                        target_file = z.namelist()[0]
-                    extracted_data = z.read(target_file, pwd=pwd_bytes)
-                    return self.extract_file_content(extracted_data, target_file, password)
-            except RuntimeError as e:
-                if "password" in str(e).lower() or "bad password" in str(e).lower() or "encrypted" in str(e).lower():
-                    if not password or not password.strip():
-                        raise PasswordRequiredError("This ZIP bank statement is password-protected. Please enter your password to unlock.")
-                    else:
-                        raise IncorrectPasswordError("Incorrect ZIP statement password. Please verify and re-enter your password.")
-                raise ValueError(f"Failed to unlock ZIP archive: {str(e)}")
-            except Exception as e:
-                raise ValueError(f"Unable to read ZIP archive: {str(e)}")
-
-        # 2. Excel Statements (.xlsx / .xls)
+        # 1. Excel Statements (.xlsx / .xls) - Checked first because .xlsx files have ZIP (PK..) signatures
         if lower_name.endswith(".xlsx") or lower_name.endswith(".xls"):
             file_stream = io.BytesIO(file_bytes)
             try:
@@ -471,6 +447,31 @@ class StatementScanner:
                         raise IncorrectPasswordError("Incorrect Excel statement password. Please verify and re-enter your password.")
                 raise ValueError(f"Unable to read Excel statement: {str(e)}")
 
+        # 2. Password-Protected ZIP archive
+        if lower_name.endswith(".zip") or file_bytes[:4] == b"PK\x03\x04":
+            try:
+                with pyzipper.AESZipFile(io.BytesIO(file_bytes)) as z:
+                    if pwd_bytes:
+                        z.setpassword(pwd_bytes)
+                    target_file = None
+                    for item in z.infolist():
+                        if any(item.filename.lower().endswith(ext) for ext in [".xlsx", ".xls", ".csv", ".txt"]):
+                            target_file = item.filename
+                            break
+                    if not target_file:
+                        target_file = z.namelist()[0]
+                    extracted_data = z.read(target_file, pwd=pwd_bytes)
+                    return self.extract_file_content(extracted_data, target_file, password)
+            except RuntimeError as e:
+                if "password" in str(e).lower() or "bad password" in str(e).lower() or "encrypted" in str(e).lower():
+                    if not password or not password.strip():
+                        raise PasswordRequiredError("This ZIP bank statement is password-protected. Please enter your password to unlock.")
+                    else:
+                        raise IncorrectPasswordError("Incorrect ZIP statement password. Please verify and re-enter your password.")
+                raise ValueError(f"Failed to unlock ZIP archive: {str(e)}")
+            except Exception as e:
+                raise ValueError(f"Unable to read ZIP archive: {str(e)}")
+
         # 3. PDF Statements (.pdf)
         if lower_name.endswith(".pdf") or file_bytes[:4] == b"%PDF":
             # Step A: Validate and enforce password protection
@@ -496,11 +497,10 @@ class StatementScanner:
             # Step B: Advanced Multi-Stage PDF Table and Layout Extraction
             structured_rows = []
 
-            # Stage 1: Try pdfplumber table extraction (highest accuracy for bank grids)
+            # Stage 1: Try pdfplumber table and text extraction in a single open pass
             try:
                 with pdfplumber.open(io.BytesIO(file_bytes), password=clean_pwd) as pdf:
                     for page in pdf.pages:
-                        # 1a. Standard visual tables (lines and cells)
                         tables = page.extract_tables()
                         if tables:
                             for tbl in tables:
@@ -510,7 +510,6 @@ class StatementScanner:
                                         if sum(1 for c in clean_r if c) >= 2:
                                             structured_rows.append(clean_r)
                         else:
-                            # 1b. Text-based table detection (detecting aligned vertical columns)
                             text_tables = page.extract_tables(table_settings={
                                 "vertical_strategy": "text",
                                 "horizontal_strategy": "text",
@@ -524,54 +523,35 @@ class StatementScanner:
                                             clean_r = [str(c).strip() if c is not None else "" for c in row]
                                             if sum(1 for c in clean_r if c) >= 2:
                                                 structured_rows.append(clean_r)
-            except Exception as e:
-                pass
 
-            # Stage 2: Fallback to Layout-Aware Text & Regex Line Parser if tables were not found
-            if not structured_rows or len(structured_rows) < 3:
-                pdf_lines = []
-                try:
-                    with pdfplumber.open(io.BytesIO(file_bytes), password=clean_pwd) as pdf:
+                    # Stage 2: Fallback to Layout-Aware Text extraction within the same open handle
+                    if not structured_rows or len(structured_rows) < 3:
+                        pdf_lines = []
                         for page in pdf.pages:
                             txt = page.extract_text(layout=True)
                             if txt:
                                 pdf_lines.extend(txt.splitlines())
-                except Exception:
-                    pass
 
-                if not pdf_lines:
-                    try:
-                        reader = PdfReader(io.BytesIO(file_bytes))
-                        if reader.is_encrypted and clean_pwd:
-                            reader.decrypt(clean_pwd)
-                        for page in reader.pages:
-                            txt = page.extract_text()
-                            if txt:
-                                pdf_lines.extend(txt.splitlines())
-                    except Exception:
-                        pass
-
-                for line in pdf_lines:
-                    line_str = line.strip()
-                    if not line_str:
-                        continue
-                    tokens = [t.strip() for t in re.split(r"\s{2,}|\t", line_str) if t.strip()]
-                    if len(tokens) >= 3:
-                        structured_rows.append(tokens)
-                    elif len(tokens) == 2 and any(self.is_valid_date(tok) for tok in tokens):
-                        structured_rows.append(tokens)
-                    else:
-                        # Regex match for standard bank transaction rows (Date at start, numbers at end)
-                        match = re.match(
-                            r"^(\d{1,4}[/\-\.]\d{1,2}[/\-\.]\d{1,4}|\d{1,2}\s+[A-Za-z]{3,9}\s+\d{2,4})\s+(.+?)\s+([0-9,]+\.\d{2}|[0-9,]+(?:\s*[Dd][Rr]|\s*[Cc][Rr])?)(?:\s+([0-9,]+\.\d{2}.*))?$",
-                            line_str
-                        )
-                        if match:
-                            dt = match.group(1).strip()
-                            desc = match.group(2).strip()
-                            amt1 = match.group(3).strip()
-                            amt2 = match.group(4).strip() if match.group(4) else ""
-                            structured_rows.append([dt, desc, amt1, amt2])
+                        for line in pdf_lines:
+                            line_str = line.strip()
+                            if not line_str:
+                                continue
+                            tokens = [t.strip() for t in re.split(r"\s{2,}|\t", line_str) if t.strip()]
+                            if len(tokens) >= 3 or (len(tokens) == 2 and any(self.is_valid_date(tok) for tok in tokens)):
+                                structured_rows.append(tokens)
+                            else:
+                                match = re.match(
+                                    r"^(\d{1,4}[/\-\.]\d{1,2}[/\-\.]\d{1,4}|\d{1,2}\s+[A-Za-z]{3,9}\s+\d{2,4})\s+(.+?)\s+([0-9,]+\.\d{2}|[0-9,]+(?:\s*[Dd][Rr]|\s*[Cc][Rr])?)(?:\s+([0-9,]+\.\d{2}.*))?$",
+                                    line_str
+                                )
+                                if match:
+                                    dt = match.group(1).strip()
+                                    desc = match.group(2).strip()
+                                    amt1 = match.group(3).strip()
+                                    amt2 = match.group(4).strip() if match.group(4) else ""
+                                    structured_rows.append([dt, desc, amt1, amt2])
+            except Exception:
+                pass
 
             if not structured_rows:
                 raise ValueError("No readable transaction text could be extracted from this PDF. Please check if it contains scanned images or an unsupported layout.")
@@ -856,11 +836,12 @@ class StatementScanner:
                 "Please ensure the file contains transaction records."
             )
 
-        # Baseline consumer spending average for anomaly scoring
+        # Baseline consumer spending median for anomaly scoring (resistant to fraud outliers)
         amounts = [t["amount"] for t in parsed_txns]
-        user_avg = float(sum(amounts) / max(len(amounts), 1))
+        user_avg = float(pd.Series(amounts).median()) if amounts else 50.0
 
-        results: List[Dict[str, Any]] = []
+        features_list = []
+        meta_list = []
 
         for idx, t in enumerate(parsed_txns):
             raw_amt = t["amount"]
@@ -894,11 +875,16 @@ class StatementScanner:
                 user_avg_amount=user_avg,
                 velocity_1h=1
             )
+            features_list.append(scaled_feats)
+            meta_list.append((raw_amt, desc, date_val, cat_val, channel, is_foreign, is_night))
 
-            # Run inference on trained PyTorch DNN
-            pred = self.predictor.predict(scaled_feats)
+        # Batched inference across entire statement in a single forward pass
+        batch_feats = np.vstack(features_list)
+        preds = self.predictor.predict_batch(batch_feats)
 
-            # Generate GDPR-compliant plain-language explanation
+        results: List[Dict[str, Any]] = []
+        for idx, (pred, meta) in enumerate(zip(preds, meta_list)):
+            raw_amt, desc, date_val, cat_val, channel, is_foreign, is_night = meta
             expl = TransactionExplainer.generate_explanation(
                 amount=raw_amt,
                 merchant_category=cat_val,

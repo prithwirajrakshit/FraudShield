@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "FraudShield • Cyber-Obsidian AI Payment Security",
-  description: "Next-generation real-time transaction fraud authorization & deep threat anomaly shield.",
+  title: "FraudShield | Real-Time Payment Security Console",
+  description: "Enterprise payment fraud prevention and universal bank statement security scanner.",
 };
 
 export default function RootLayout({
@@ -13,7 +13,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark h-full antialiased">
-      <body className="min-h-full flex flex-col bg-[#070b14] text-slate-100 font-sans selection:bg-blue-500/30 selection:text-blue-200">
+      <body className="min-h-full flex flex-col font-sans bg-[var(--bg-canvas)] text-[var(--text-primary)]">
         {children}
       </body>
     </html>

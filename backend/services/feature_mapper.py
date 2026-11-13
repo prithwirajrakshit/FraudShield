@@ -80,10 +80,6 @@ class FeatureMapper:
         # In ULB dataset:
         # Fraud cases strongly shift: V14 negative, V10 negative, V12 negative, V4 positive, V11 positive
         v_vector = np.zeros(28)
-        
-        # Base normal transaction noise
-        np.random.seed(int(amount * 100) % 10000)
-        v_vector += np.random.normal(0, 0.2, 28)
 
         if total_anomaly > 1.0:
             # Shift primary fraud discriminative axes proportionally

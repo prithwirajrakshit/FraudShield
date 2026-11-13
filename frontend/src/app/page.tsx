@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { ShieldCheck } from "lucide-react";
+import { Shield } from "lucide-react";
 import { Navbar } from "../components/Navbar";
 import { TransactionForm } from "../components/TransactionForm";
 import { RiskGauge } from "../components/RiskGauge";
@@ -20,7 +20,7 @@ export default function Home() {
   const [scenarios, setScenarios] = useState<Scenario[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Initial Form State - Clean slate (amount 0)
+  // Initial Form State
   const [formData, setFormData] = useState<TransactionCheckRequest>({
     amount: 0,
     merchant_name: "",
@@ -33,10 +33,9 @@ export default function Home() {
     velocity_1h: 1,
   });
 
-  // Assessment State (starts null until evaluated)
+  // Assessment State
   const [assessmentResult, setAssessmentResult] = useState<TransactionCheckResponse | null>(null);
 
-  // Load scenarios on mount without auto-evaluating
   useEffect(() => {
     async function init() {
       const scList = await fetchScenarios();
@@ -57,58 +56,32 @@ export default function Home() {
     }
   };
 
-  const status = assessmentResult?.security_assessment.status || "APPROVED";
-  const glowColorClass =
-    status === "BLOCKED"
-      ? "from-rose-600/15 via-rose-950/5 to-transparent"
-      : status === "CHALLENGE"
-      ? "from-amber-600/15 via-amber-950/5 to-transparent"
-      : "from-cyan-600/15 via-blue-950/5 to-transparent";
-
   return (
-    <div className="relative min-h-screen bg-[#070b14] text-slate-100 flex flex-col font-sans cyber-grid selection:bg-cyan-500/30 selection:text-cyan-200">
+    <div className="relative min-h-screen bg-[var(--bg-canvas)] text-[var(--text-primary)] flex flex-col font-sans app-grid-bg">
       
-      {/* Dynamic Ambient Background Glow Light Orb */}
-      <div className={`fixed top-0 left-1/2 -translate-x-1/2 w-[800px] h-[450px] bg-gradient-to-b ${glowColorClass} blur-[120px] pointer-events-none transition-all duration-700`}></div>
-
-      {/* Top Navbar */}
+      {/* Top Navigation */}
       <Navbar activeTab={activeTab} setActiveTab={setActiveTab} />
 
       {/* Main Container */}
-      <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
         
-        {/* Page Hero Header */}
-        <div className="mb-8">
-          <div className="flex items-center gap-2 mb-2">
-            <span className="h-1.5 w-1.5 rounded-full bg-cyan-400 animate-ping"></span>
-            <span className="text-[11px] font-mono uppercase tracking-widest text-cyan-400 font-bold">
-              Autonomous Threat Interception Gateway
-            </span>
-          </div>
-
-          <h1 className="text-2xl sm:text-4xl font-black tracking-tight text-white font-mono">
-            {activeTab === "single" ? (
-              <>
-                Real-Time <span className="bg-gradient-to-r from-blue-400 via-cyan-300 to-indigo-300 bg-clip-text text-transparent">Payment Security</span> Guard
-              </>
-            ) : (
-              <>
-                Bank & Card <span className="bg-gradient-to-r from-blue-400 via-cyan-300 to-indigo-300 bg-clip-text text-transparent">Statement Security</span> Scanner
-              </>
-            )}
+        {/* Page Header */}
+        <div className="mb-6">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white font-sans">
+            {activeTab === "single" ? "Payment fraud detection" : "Bank statement security audit"}
           </h1>
-          <p className="text-xs sm:text-sm text-slate-400 mt-1 max-w-2xl leading-relaxed">
+          <p className="text-xs sm:text-sm text-[var(--text-secondary)] mt-1 max-w-2xl leading-relaxed">
             {activeTab === "single"
-              ? "Verify individual purchase authorizations against high-dimensional behavioral anomaly patterns with sub-2ms PyTorch neural inference."
-              : "Bulk-scan cardholder and corporate statements. Detect unauthorized account takeover, overseas cash-outs, and rapid fund drain."}
+              ? "Score live purchase authorizations against behavioral anomaly patterns in real time."
+              : "Scan bank and card statements to identify suspicious charges, velocity spikes, and off-hour withdrawals."}
           </p>
         </div>
 
         {/* Tab 1: Single Transaction Guard */}
         {activeTab === "single" && (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
             
-            {/* Left Column: Form & Simulator Inputs (5 cols) */}
+            {/* Left Column: Form (5 cols) */}
             <div className="lg:col-span-5">
               <TransactionForm
                 formData={formData}
@@ -119,7 +92,7 @@ export default function Home() {
               />
             </div>
 
-            {/* Right Column: Holographic Risk Gauge & XAI Attribution (7 cols) */}
+            {/* Right Column: Assessment & Breakdown (7 cols) */}
             <div className="lg:col-span-7 space-y-6">
               {assessmentResult ? (
                 <>
@@ -133,14 +106,14 @@ export default function Home() {
                   />
                 </>
               ) : (
-                <div className="rounded-2xl border border-slate-800/80 glass-panel p-12 text-center flex flex-col items-center justify-center space-y-4">
-                  <div className="w-16 h-16 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-center text-cyan-400">
-                    <ShieldCheck className="h-8 w-8" />
+                <div className="surface-card p-10 text-center flex flex-col items-center justify-center space-y-3 border border-[var(--border-subtle)]">
+                  <div className="w-12 h-12 rounded-xl bg-[var(--bg-card-raised)] border border-[var(--border-strong)] flex items-center justify-center text-[var(--text-muted)]">
+                    <Shield className="h-6 w-6 stroke-[1.8]" />
                   </div>
                   <div>
-                    <h3 className="text-base font-bold text-white font-mono">Autonomous Threat Gateway Ready</h3>
-                    <p className="text-xs text-slate-400 mt-1 max-w-sm leading-relaxed">
-                      Enter transaction parameters on the left or select a preset scenario to evaluate with sub-2ms PyTorch neural inference.
+                    <h3 className="text-sm font-semibold text-white">Evaluation console ready</h3>
+                    <p className="text-xs text-[var(--text-secondary)] mt-1 max-w-sm leading-relaxed">
+                      Enter transaction parameters on the left or select a preset scenario to score risk factors.
                     </p>
                   </div>
                 </div>
@@ -150,25 +123,23 @@ export default function Home() {
           </div>
         )}
 
-        {/* Tab 2: Statement Bulk Scanner */}
+        {/* Tab 2: Statement Scanner */}
         {activeTab === "statement" && (
-          <div className="max-w-5xl mx-auto">
+          <div className="max-w-4xl mx-auto">
             <StatementScanner />
           </div>
         )}
 
       </main>
 
-      {/* Cyber Footer */}
-      <footer className="relative z-10 border-t border-slate-800/80 bg-[#070b14]/90 backdrop-blur-md py-6 mt-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between text-xs font-mono text-slate-500 gap-3">
-          <p>© 2026 FraudShield AI • Adaptive Deep Focal Neural Security Architecture</p>
-          <div className="flex items-center gap-5">
-            <span className="flex items-center gap-1.5 text-slate-400">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-xs shadow-emerald-400"></span>
-              256-Bit Hardware Encryption
+      {/* Footer */}
+      <footer className="border-t border-[var(--border-subtle)] bg-[var(--bg-canvas)] py-5 mt-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between text-xs text-[var(--text-muted)] gap-2">
+          <p>© 2026 FraudShield • Payment risk scoring & anomaly detection console</p>
+          <div className="flex items-center gap-4">
+            <span className="text-[var(--text-secondary)]">
+              Ephemeral in-memory processing
             </span>
-            <span className="text-slate-400">GDPR Art. 22 Audited</span>
           </div>
         </div>
       </footer>

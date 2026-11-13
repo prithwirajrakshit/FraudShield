@@ -19,3 +19,14 @@ pyzipper>=0.3.6
 # Reports & Diagrams
 python-docx>=1.1.0
 matplotlib>=3.8.0
+
+# Testing & API Verification
+pytest>=8.0.0
+httpx>=0.27.0
+
+# Optional Benchmark Tooling (for benchmarks/ suites)
+# xgboost>=2.0.0
+# lightgbm>=4.0.0
+# imbalanced-learn>=0.12.0
+# seaborn>=0.13.0
+
