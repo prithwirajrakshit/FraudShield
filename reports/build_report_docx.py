@@ -755,6 +755,25 @@ def build_document():
             if is_focal and c_i >= 4:
                 r.font.color.rgb = RGBColor(22, 101, 52) # Dark emerald for best scores
 
+    # Figure 5.1: Comparative Benchmark Chart
+    benchmark_img_path = os.path.join(os.path.dirname(__file__), "diagrams", "MODEL_BENCHMARK_COMPARISON.png")
+    if os.path.exists(benchmark_img_path):
+        p_fig51 = doc.add_paragraph()
+        p_fig51.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        p_fig51.paragraph_format.space_before = Pt(10)
+        p_fig51.paragraph_format.space_after = Pt(4)
+        run_fig51 = p_fig51.add_run()
+        run_fig51.add_picture(benchmark_img_path, width=Inches(6.2))
+        
+        p_cap51 = doc.add_paragraph()
+        p_cap51.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        p_cap51.paragraph_format.space_after = Pt(12)
+        r_cap51 = p_cap51.add_run("Figure 5.1: Comparative Performance Benchmark of Competing Fraud Detection Models")
+        r_cap51.font.name = "Times New Roman"
+        r_cap51.font.bold = True
+        r_cap51.font.size = Pt(10)
+        r_cap51.font.italic = True
+
     add_body_p("Discussion of Results:")
     add_bullet_p("The Standard DNN using Binary Cross-Entropy achieved an F1-score of only 0.729 and missed almost 29% of fraud transactions (Recall of 71.4%). By switching to Focal Loss, our model improved Recall to 82.5% and Precision to 86.4%, pushing the F1-score to 0.844.", "1. Focal DNN vs. Standard DNN: ")
     add_bullet_p("While SMOTE improved recall to 79.6%, it created many false positives because synthetic data blurred the boundary lines, dropping its precision to 78.1%. Our Focal DNN achieved both higher precision and higher recall without having to generate fake data.", "2. Focal DNN vs. SMOTE: ")
