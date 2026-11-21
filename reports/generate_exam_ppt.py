@@ -346,12 +346,13 @@ def build_student_presentation(output_path="d:/Fraud Detection/docs/FRAUDSHIELD_
     s9 = prs.slides.add_slide(blank_layout)
     add_header(s9, "How The Whole System Works (User Journey)", slide_num="09")
 
-    uml_path = "d:/Fraud Detection/reports/diagrams/FRAUDSHIELD_UML_ACTIVITY_DIAGRAM.png"
-    if os.path.exists(uml_path):
-        s9.shapes.add_picture(uml_path, Inches(0.8), Inches(1.65), width=Inches(7.2))
+    # Use clean landscape workflow diagram that fits the slide perfectly
+    flow_path = "d:/Fraud Detection/reports/diagrams/SYSTEM_WORKFLOW_LANDSCAPE.png"
+    if os.path.exists(flow_path):
+        s9.shapes.add_picture(flow_path, Inches(0.8), Inches(1.7), width=Inches(7.4))
 
-    add_card(s9, Inches(8.3), Inches(1.65), Inches(4.2), Inches(5.2), "The 4 Quick Steps", C_BLUE)
-    tb = s9.shapes.add_textbox(Inches(8.5), Inches(2.2), Inches(3.8), Inches(4.4))
+    add_card(s9, Inches(8.5), Inches(1.7), Inches(4.0), Inches(5.0), "The 4 Quick Steps", C_BLUE)
+    tb = s9.shapes.add_textbox(Inches(8.7), Inches(2.2), Inches(3.6), Inches(4.3))
     tf = tb.text_frame
     tf.word_wrap = True
     p = tf.paragraphs[0]
