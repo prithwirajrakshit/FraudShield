@@ -25,6 +25,14 @@ export const theme = {
     roseDark: "#881337",
     roseGlow: "rgba(244, 63, 94, 0.25)",
     
+    // Hallmark additions: interactive card cursor glow & always-on logo red glow
+    glowLogoRed: "rgba(244, 63, 94, 0.55)",
+    glowLogoRedAura: "rgba(244, 63, 94, 0.25)",
+    glowLogoRedBorder: "rgba(244, 63, 94, 0.7)",
+    glowCardGreen: "rgba(16, 185, 129, 0.18)",
+    glowCardGreenSubtle: "rgba(16, 185, 129, 0.05)",
+    glowCardBorder: "rgba(16, 185, 129, 0.35)",
+    
     text: "#f8fafc",
     textMuted: "#94a3b8",
     textSubtle: "#64748b",

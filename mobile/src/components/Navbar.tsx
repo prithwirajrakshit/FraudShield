@@ -1,6 +1,6 @@
-import React from "react";
-import { View, Text, StyleSheet, Pressable } from "react-native";
-import { ShieldCheck, Settings, Server } from "lucide-react-native";
+import React, { useEffect, useRef } from "react";
+import { View, Text, StyleSheet, Pressable, Animated } from "react-native";
+import { ShieldCheck, Settings } from "lucide-react-native";
 import { theme } from "../styles/theme";
 
 interface NavbarProps {
@@ -9,11 +9,53 @@ interface NavbarProps {
 }
 
 export function Navbar({ onOpenSettings, serverStatus }: NavbarProps) {
+  const pulseAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    const animation = Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulseAnim, {
+          toValue: 1,
+          duration: 1800,
+          useNativeDriver: true,
+        }),
+        Animated.timing(pulseAnim, {
+          toValue: 0,
+          duration: 1800,
+          useNativeDriver: true,
+        }),
+      ])
+    );
+    animation.start();
+    return () => animation.stop();
+  }, [pulseAnim]);
+
+  const auraOpacity = pulseAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0.35, 0.75],
+  });
+
+  const auraScale = pulseAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0.95, 1.15],
+  });
+
   return (
     <View style={styles.container}>
       <View style={styles.brandRow}>
-        <View style={styles.logoBadge}>
-          <ShieldCheck size={20} color={theme.colors.cyan} strokeWidth={2.5} />
+        <View style={styles.logoContainer}>
+          <Animated.View
+            style={[
+              styles.logoAura,
+              {
+                opacity: auraOpacity,
+                transform: [{ scale: auraScale }],
+              },
+            ]}
+          />
+          <View style={styles.logoBadge}>
+            <ShieldCheck size={20} color={theme.colors.rose} strokeWidth={2.5} />
+          </View>
         </View>
         <View>
           <Text style={styles.brandTitle}>
@@ -61,29 +103,51 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 10,
   },
+  logoContainer: {
+    position: "relative",
+    width: 38,
+    height: 38,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  logoAura: {
+    position: "absolute",
+    width: 44,
+    height: 44,
+    borderRadius: 14,
+    backgroundColor: "rgba(244, 63, 94, 0.4)",
+    shadowColor: "#f43f5e",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.85,
+    shadowRadius: 10,
+    elevation: 6,
+  },
   logoBadge: {
     width: 38,
     height: 38,
     borderRadius: 12,
-    backgroundColor: "rgba(6, 182, 212, 0.12)",
-    borderWidth: 1,
-    borderColor: "rgba(6, 182, 212, 0.35)",
+    backgroundColor: "rgba(244, 63, 94, 0.16)",
+    borderWidth: 1.5,
+    borderColor: "rgba(244, 63, 94, 0.7)",
     alignItems: "center",
     justifyContent: "center",
   },
   brandTitle: {
-    fontSize: 17,
+    fontSize: 16,
     fontWeight: "900",
     color: "#ffffff",
-    letterSpacing: -0.5,
+    letterSpacing: 1.2,
+    textTransform: "uppercase",
   },
   brandHighlight: {
-    color: theme.colors.cyan,
+    color: theme.colors.roseLight,
   },
   brandSubtitle: {
-    fontSize: 10,
+    fontSize: 9.5,
     color: theme.colors.textSubtle,
-    fontWeight: "600",
+    fontWeight: "700",
+    letterSpacing: 0.5,
+    textTransform: "uppercase",
   },
   rightActions: {
     flexDirection: "row",

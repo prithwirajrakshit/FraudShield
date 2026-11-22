@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { Upload, FileText, CheckCircle2, AlertTriangle, ShieldAlert, Sparkles, RefreshCw, Lock, Eye, EyeOff, KeyRound } from "lucide-react";
 import { StatementScanResponse, uploadStatement } from "../lib/api";
+import { GlowCard } from "./GlowCard";
 
 export function StatementScanner() {
   const [file, setFile] = useState<File | null>(null);
@@ -91,15 +92,15 @@ export function StatementScanner() {
     <div className="space-y-6">
       
       {/* Upload Zone */}
-      <div className="surface-card p-8 text-center border-2 border-dashed border-[var(--border-subtle)] hover:border-[var(--border-strong)] transition-colors">
+      <GlowCard className="p-8 text-center border-2 border-dashed border-sky-500/40 hover:border-sky-400">
         <div className="max-w-xl mx-auto space-y-4">
           
-          <div className="h-12 w-12 rounded-xl bg-[var(--bg-card-raised)] border border-[var(--border-strong)] flex items-center justify-center text-[var(--accent-light)] mx-auto">
+          <div className="h-12 w-12 rounded-xl glow-badge-cyber flex items-center justify-center text-sky-400 mx-auto">
             <Upload className="h-6 w-6 stroke-[2]" />
           </div>
 
           <div>
-            <h3 className="text-base font-bold text-white font-sans">
+            <h3 className="text-base font-bold text-white font-display tracking-wide">
               Upload bank statement
             </h3>
             <p className="text-xs text-[var(--text-secondary)] mt-1">
@@ -108,10 +109,10 @@ export function StatementScanner() {
           </div>
 
           {/* Password Input for Protected Statements */}
-          <div className="p-3.5 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-card-raised)] text-left">
+          <div className="p-3.5 rounded-lg glow-subcard text-left">
             <div className="flex items-center justify-between mb-1.5">
               <label className="text-xs font-medium text-[var(--text-secondary)] flex items-center gap-1.5">
-                <Lock className="h-3.5 w-3.5 text-[var(--text-muted)]" />
+                <Lock className="h-3.5 w-3.5 text-sky-400" />
                 <span>Statement password (if encrypted)</span>
               </label>
               <span className="text-[10px] text-[var(--text-muted)]">Optional</span>
@@ -127,7 +128,7 @@ export function StatementScanner() {
                   if (error) setError(null);
                 }}
                 placeholder="e.g. DOB (DDMMYYYY), PAN, or mobile number"
-                className="w-full px-3 py-2 pr-10 text-xs rounded-md border border-[var(--border-subtle)] bg-[var(--bg-canvas)] text-white placeholder-[var(--text-muted)] focus:border-[var(--accent-light)] focus:outline-hidden"
+                className="w-full px-3 py-2 pr-10 text-xs rounded-md glow-input text-white placeholder-[var(--text-muted)] focus:outline-hidden"
               />
               <button
                 type="button"
@@ -140,10 +141,13 @@ export function StatementScanner() {
             </div>
           </div>
 
-          {/* Action Buttons */}
+          {/* Action Buttons with Tokenized Cyber Glowing Treatment */}
           <div className="flex flex-wrap items-center justify-center gap-2.5 pt-1">
-            <label className="px-4 py-2 rounded-lg bg-[var(--accent-primary)] hover:bg-[var(--accent-hover)] text-white font-medium text-xs transition-colors cursor-pointer border border-[var(--accent-light)]/20 shadow-xs">
-              Select statement file
+            <label className="flex items-center gap-2 px-4 py-2.5 rounded-lg glow-btn-primary text-white font-semibold text-xs cursor-pointer">
+              <Upload className="h-3.5 w-3.5 text-white glow-icon-cyber" />
+              <span className="font-display tracking-wide">
+                Select statement file
+              </span>
               <input
                 type="file"
                 accept=".csv,.zip,.xlsx,.xls,.pdf"
@@ -155,10 +159,10 @@ export function StatementScanner() {
             <button
               type="button"
               onClick={loadSampleStatement}
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[var(--bg-card-raised)] border border-[var(--border-subtle)] hover:border-[var(--border-strong)] text-[var(--text-secondary)] hover:text-white font-medium text-xs transition-colors cursor-pointer"
+              className="flex items-center gap-1.5 px-4 py-2.5 rounded-lg glow-subcard text-sky-100 hover:text-white font-semibold text-xs cursor-pointer"
             >
-              <Sparkles className="h-3.5 w-3.5 text-[var(--accent-light)]" />
-              <span>Load demo statement</span>
+              <Sparkles className="h-3.5 w-3.5 text-sky-400 glow-icon-cyber" />
+              <span className="tracking-wide">Load demo statement</span>
             </button>
           </div>
 
@@ -188,16 +192,16 @@ export function StatementScanner() {
           )}
 
         </div>
-      </div>
+      </GlowCard>
 
       {/* Loading Readout */}
       {isLoading && (
-        <div className="py-8 text-center space-y-2 surface-card border border-[var(--border-subtle)]">
-          <RefreshCw className="h-5 w-5 text-[var(--accent-light)] animate-spin mx-auto" />
+        <GlowCard className="py-8 text-center space-y-2">
+          <RefreshCw className="h-5 w-5 text-[var(--accent-light)] motion-safe:animate-spin mx-auto" />
           <p className="text-xs text-[var(--text-secondary)]">
-            Scanning statement against fraud detection model...
+            Scanning statement against fraud detection model…
           </p>
-        </div>
+        </GlowCard>
       )}
 
       {/* Results View */}
@@ -207,7 +211,7 @@ export function StatementScanner() {
           {/* Summary Stat Cards */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             
-            <div className="surface-card p-4 border border-[var(--border-subtle)]">
+            <GlowCard className="p-4">
               <span className="text-xs text-[var(--text-muted)] font-medium">
                 Scanned transactions
               </span>
@@ -217,9 +221,9 @@ export function StatementScanner() {
               <span className="text-xs text-[var(--text-secondary)] font-mono">
                 ₹{scanResult.summary.total_volume_dollars.toLocaleString()} total
               </span>
-            </div>
+            </GlowCard>
 
-            <div className="surface-card p-4 border border-[var(--color-safe-border)] bg-[var(--color-safe-bg)]">
+            <GlowCard className="p-4 border-[var(--color-safe-border)] bg-[var(--color-safe-bg)]">
               <span className="text-xs font-medium text-emerald-400 flex items-center gap-1">
                 <CheckCircle2 className="h-3.5 w-3.5" />
                 Approved
@@ -228,9 +232,9 @@ export function StatementScanner() {
                 {scanResult.summary.approved_count}
               </p>
               <span className="text-xs text-emerald-400/80">Normal spending</span>
-            </div>
+            </GlowCard>
 
-            <div className="surface-card p-4 border border-[var(--color-warning-border)] bg-[var(--color-warning-bg)]">
+            <GlowCard className="p-4 border-[var(--color-warning-border)] bg-[var(--color-warning-bg)]">
               <span className="text-xs font-medium text-amber-400 flex items-center gap-1">
                 <AlertTriangle className="h-3.5 w-3.5" />
                 Suspicious
@@ -239,9 +243,9 @@ export function StatementScanner() {
                 {scanResult.summary.challenged_count}
               </p>
               <span className="text-xs text-amber-400/80">Requires verification</span>
-            </div>
+            </GlowCard>
 
-            <div className="surface-card p-4 border border-[var(--color-danger-border)] bg-[var(--color-danger-bg)]">
+            <GlowCard className="p-4 border-[var(--color-danger-border)] bg-[var(--color-danger-bg)]">
               <span className="text-xs font-medium text-rose-400 flex items-center gap-1">
                 <ShieldAlert className="h-3.5 w-3.5" />
                 Blocked
@@ -252,15 +256,15 @@ export function StatementScanner() {
               <span className="text-xs text-rose-400/80 font-mono">
                 ₹{scanResult.summary.flagged_volume_dollars.toLocaleString()} guarded
               </span>
-            </div>
+            </GlowCard>
 
           </div>
 
           {/* Transaction Table */}
-          <div className="surface-card border border-[var(--border-subtle)] overflow-hidden">
+          <GlowCard className="overflow-hidden">
             <div className="px-5 py-3.5 border-b border-[var(--border-subtle)] flex items-center justify-between">
               <div>
-                <h4 className="text-xs font-semibold text-white">
+                <h4 className="text-xs font-semibold text-white font-display tracking-wide">
                   Transaction risk audit
                 </h4>
                 <p className="text-xs text-[var(--text-muted)]">
@@ -316,7 +320,7 @@ export function StatementScanner() {
                 </tbody>
               </table>
             </div>
-          </div>
+          </GlowCard>
 
         </div>
       )}
@@ -389,7 +393,7 @@ export function StatementScanner() {
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 py-2 px-3 rounded-lg bg-[var(--accent-primary)] hover:bg-[var(--accent-hover)] text-xs font-semibold text-white transition-colors cursor-pointer"
+                  className="flex-1 py-2 px-3 rounded-lg glow-btn-primary text-xs font-semibold text-white cursor-pointer font-display tracking-wide"
                 >
                   {modalType === "required" ? "Unlock & scan" : "Retry"}
                 </button>

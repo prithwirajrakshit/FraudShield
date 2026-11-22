@@ -32,6 +32,7 @@ import {
   getScenarios 
 } from "../lib/api";
 import { RiskGauge } from "./RiskGauge";
+import { GlowCard } from "./GlowCard";
 import { theme } from "../styles/theme";
 
 export function TransactionScreen() {
@@ -127,7 +128,7 @@ export function TransactionScreen() {
           <RiskGauge assessment={result.security_assessment} />
 
           {/* Explanation Matrix Card */}
-          <View style={styles.explanationCard}>
+          <GlowCard style={styles.explanationCard}>
             <View style={styles.explHeader}>
               <ShieldCheck size={16} color={theme.colors.cyan} />
               <Text style={styles.explTitle}>GDPR Art. 22 Threat Attribution</Text>
@@ -162,7 +163,7 @@ export function TransactionScreen() {
                 <Text key={idx} style={styles.actionStep}>• {step}</Text>
               ))}
             </View>
-          </View>
+          </GlowCard>
         </View>
       )}
 
@@ -188,7 +189,7 @@ export function TransactionScreen() {
       </ScrollView>
 
       {/* Main Input Form */}
-      <View style={styles.formCard}>
+      <GlowCard style={styles.formCard}>
         
         {/* Amount Input */}
         <Text style={styles.fieldLabel}>Transaction Amount (₹)</Text>
@@ -375,7 +376,7 @@ export function TransactionScreen() {
           )}
         </Pressable>
 
-      </View>
+      </GlowCard>
 
     </ScrollView>
   );

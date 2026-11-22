@@ -82,8 +82,8 @@ export interface StatementScanResponse {
   transactions: ScannedTransaction[];
 }
 
-// Default backend URL: read from environment or platform default
-let currentApiBase = process.env.EXPO_PUBLIC_API_URL || (Platform.OS === "android" ? "http://10.0.2.2:8000" : "http://localhost:8000");
+// Default backend URL: read from environment or current host IP
+let currentApiBase = process.env.EXPO_PUBLIC_API_URL || "http://10.189.141.31:8000";
 
 export function getApiBase(): string {
   return currentApiBase;

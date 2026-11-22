@@ -3,6 +3,7 @@
 import React from "react";
 import { CheckCircle2, AlertTriangle, ShieldAlert, Clock, Cpu } from "lucide-react";
 import { SecurityAssessment } from "../lib/api";
+import { GlowCard } from "./GlowCard";
 
 interface RiskGaugeProps {
   assessment: SecurityAssessment;
@@ -55,12 +56,33 @@ export function RiskGauge({ assessment }: RiskGaugeProps) {
   const strokeDashoffset = circumference - (percent / 100) * circumference;
 
   return (
-    <div className="surface-card p-6 border border-[var(--border-subtle)]">
+    <GlowCard className="p-6">
       <div className="flex flex-col sm:flex-row items-center gap-6 justify-between">
         
-        {/* Precision Circular Risk Meter */}
+        {/* Precision Circular Risk Meter with Luminous Arc Glow */}
         <div className="relative flex items-center justify-center shrink-0">
-          <svg className="w-36 h-36 transform -rotate-90" aria-label={`Risk meter: ${percent}%`}>
+          {/* Ambient Center Aura */}
+          <div
+            className="absolute w-24 h-24 rounded-full pointer-events-none -z-0 opacity-20"
+            style={{
+              background: `radial-gradient(circle, ${config.color} 0%, transparent 70%)`,
+              filter: "blur(14px)",
+            }}
+          />
+
+          <svg className="w-36 h-36 transform -rotate-90 overflow-visible" aria-label={`Risk meter: ${percent}%`}>
+            <defs>
+              <filter id="gaugeArcGlow" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur in="SourceGraphic" stdDeviation="3.5" result="blur1" />
+                <feGaussianBlur in="SourceGraphic" stdDeviation="7" result="blur2" />
+                <feMerge>
+                  <feMergeNode in="blur2" />
+                  <feMergeNode in="blur1" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </defs>
+
             {/* Background Track */}
             <circle
               cx="72"
@@ -70,7 +92,7 @@ export function RiskGauge({ assessment }: RiskGaugeProps) {
               strokeWidth={strokeWidth}
               fill="transparent"
             />
-            {/* Active Value Arc */}
+            {/* Active Value Arc with Neon Luminescence */}
             <circle
               cx="72"
               cy="72"
@@ -81,13 +103,17 @@ export function RiskGauge({ assessment }: RiskGaugeProps) {
               strokeDasharray={circumference}
               strokeDashoffset={strokeDashoffset}
               strokeLinecap="round"
+              filter="url(#gaugeArcGlow)"
               className="transition-[stroke-dashoffset] duration-500 ease-out"
             />
           </svg>
 
           {/* Central Metric */}
           <div className="absolute flex flex-col items-center justify-center text-center">
-            <span className="text-3xl font-bold tracking-tight text-white font-mono">
+            <span
+              className="text-3xl font-bold tracking-tight text-white glow-metric-white"
+              style={{ fontFamily: "var(--font-display)" }}
+            >
               {percent}%
             </span>
             <span className="text-xs text-[var(--text-muted)] font-medium">
@@ -116,7 +142,7 @@ export function RiskGauge({ assessment }: RiskGaugeProps) {
             </span>
           </div>
 
-          <h3 className={`text-xl font-bold tracking-tight ${config.textColor}`}>
+          <h3 className={`text-lg sm:text-xl font-bold tracking-wide uppercase font-display ${config.textColor}`}>
             {assessment.headline}
           </h3>
 
@@ -126,6 +152,6 @@ export function RiskGauge({ assessment }: RiskGaugeProps) {
         </div>
 
       </div>
-    </div>
+    </GlowCard>
   );
 }

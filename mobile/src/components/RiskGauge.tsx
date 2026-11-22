@@ -4,6 +4,7 @@ import Svg, { Circle, G, Defs, LinearGradient, Stop } from "react-native-svg";
 import { CheckCircle2, AlertTriangle, ShieldAlert, Zap, Cpu, Radio } from "lucide-react-native";
 import { SecurityAssessment } from "../lib/api";
 import { theme } from "../styles/theme";
+import { GlowCard } from "./GlowCard";
 
 interface RiskGaugeProps {
   assessment: SecurityAssessment;
@@ -52,7 +53,7 @@ export function RiskGauge({ assessment }: RiskGaugeProps) {
   const strokeDashoffset = circumference - (percent / 100) * circumference;
 
   return (
-    <View style={[styles.card, { borderColor: config.badgeBorder }]}>
+    <GlowCard style={[styles.card, { borderColor: config.badgeBorder }]}>
       <View style={styles.content}>
         
         {/* Holographic Circular HUD Gauge */}
@@ -132,7 +133,7 @@ export function RiskGauge({ assessment }: RiskGaugeProps) {
         </View>
 
       </View>
-    </View>
+    </GlowCard>
   );
 }
 

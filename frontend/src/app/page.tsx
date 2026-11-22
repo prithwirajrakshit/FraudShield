@@ -7,6 +7,7 @@ import { TransactionForm } from "../components/TransactionForm";
 import { RiskGauge } from "../components/RiskGauge";
 import { ExplanationCard } from "../components/ExplanationCard";
 import { StatementScanner } from "../components/StatementScanner";
+import { GlowCard } from "../components/GlowCard";
 import {
   TransactionCheckRequest,
   TransactionCheckResponse,
@@ -58,19 +59,29 @@ export default function Home() {
 
   return (
     <div className="relative min-h-screen bg-[var(--bg-canvas)] text-[var(--text-primary)] flex flex-col font-sans app-grid-bg">
+      {/* High-Fidelity Atmospheric Depth & Telemetry Grid Mesh */}
+      <div className="app-ambient-glow" aria-hidden="true" />
+      <div className="app-grid-mesh" aria-hidden="true" />
+      
+      {/* Cascading Security Telemetry Flow (Slow Top-to-Bottom Ambient Glow) */}
+      <div className="app-flow-container" aria-hidden="true">
+        <div className="app-flow-track">
+          <div className="app-flow-aurora" />
+        </div>
+      </div>
       
       {/* Top Navigation */}
       <Navbar activeTab={activeTab} setActiveTab={setActiveTab} />
 
       {/* Main Container */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full relative z-10">
         
         {/* Page Header */}
         <div className="mb-6">
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white font-sans">
+          <h1 className="text-xl sm:text-2xl font-bold text-white font-display">
             {activeTab === "single" ? "Payment fraud detection" : "Bank statement security audit"}
           </h1>
-          <p className="text-xs sm:text-sm text-[var(--text-secondary)] mt-1 max-w-2xl leading-relaxed">
+          <p className="text-xs sm:text-sm text-[var(--text-secondary)] mt-1.5 max-w-2xl leading-relaxed">
             {activeTab === "single"
               ? "Score live purchase authorizations against behavioral anomaly patterns in real time."
               : "Scan bank and card statements to identify suspicious charges, velocity spikes, and off-hour withdrawals."}
@@ -106,17 +117,34 @@ export default function Home() {
                   />
                 </>
               ) : (
-                <div className="surface-card p-10 text-center flex flex-col items-center justify-center space-y-3 border border-[var(--border-subtle)]">
-                  <div className="w-12 h-12 rounded-xl bg-[var(--bg-card-raised)] border border-[var(--border-strong)] flex items-center justify-center text-[var(--text-muted)]">
-                    <Shield className="h-6 w-6 stroke-[1.8]" />
+                <GlowCard className="min-h-[420px] flex flex-col justify-center">
+                  <div className="p-8 sm:p-12 text-center flex flex-col items-center justify-center space-y-4 w-full">
+                    {/* Centered Luminous Cyber Shield Badge */}
+                    <div className="w-16 h-16 rounded-2xl glow-badge-cyber flex items-center justify-center">
+                      <Shield className="h-8 w-8 stroke-[2] glow-icon-cyber" />
+                    </div>
+
+                    <div className="max-w-md">
+                      <h3 className="text-base font-bold text-white font-display tracking-wide">
+                        Evaluation console ready
+                      </h3>
+                      <p className="text-xs text-[var(--text-secondary)] mt-1.5 leading-relaxed">
+                        Enter transaction parameters on the left or select a preset scenario to score risk factors in real time.
+                      </p>
+                    </div>
+
+                    {/* Readiness Status Indicators */}
+                    <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-medium glow-pill-safe">
+                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 motion-safe:animate-pulse" />
+                        Gateway active
+                      </span>
+                      <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[11px] text-[var(--text-secondary)] bg-[var(--bg-card-raised)] border border-sky-500/30">
+                        Baseline loaded
+                      </span>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="text-sm font-semibold text-white">Evaluation console ready</h3>
-                    <p className="text-xs text-[var(--text-secondary)] mt-1 max-w-sm leading-relaxed">
-                      Enter transaction parameters on the left or select a preset scenario to score risk factors.
-                    </p>
-                  </div>
-                </div>
+                </GlowCard>
               )}
             </div>
 
@@ -133,7 +161,7 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-[var(--border-subtle)] bg-[var(--bg-canvas)] py-5 mt-10">
+      <footer className="border-t border-[var(--border-subtle)] bg-[var(--bg-canvas)]/90 backdrop-blur-xs py-5 mt-10 relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between text-xs text-[var(--text-muted)] gap-2">
           <p>© 2026 FraudShield • Payment risk scoring & anomaly detection console</p>
           <div className="flex items-center gap-4">

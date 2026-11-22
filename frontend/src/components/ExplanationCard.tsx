@@ -3,6 +3,7 @@
 import React from "react";
 import { CheckCircle2, ArrowRight, Lock, KeyRound, ShieldCheck } from "lucide-react";
 import { RiskFactor, RecommendedAction } from "../lib/api";
+import { GlowCard } from "./GlowCard";
 
 interface ExplanationCardProps {
   riskFactors: RiskFactor[];
@@ -22,7 +23,7 @@ export function ExplanationCard({
       
       {/* Identified Risk Factors */}
       {riskFactors.length > 0 && (
-        <div className="surface-card p-5 border border-[var(--border-subtle)] space-y-3">
+        <GlowCard className="p-5 space-y-3">
           <div className="flex items-center justify-between pb-2 border-b border-[var(--border-subtle)]">
             <h4 className="text-xs font-semibold text-[var(--text-secondary)]">
               Identified risk factors ({riskFactors.length})
@@ -71,48 +72,48 @@ export function ExplanationCard({
               </div>
             ))}
           </div>
-        </div>
+        </GlowCard>
       )}
 
       {/* Normal Spending Indicators */}
       {safetyFactors.length > 0 && (
-        <div className="surface-card p-5 border border-[var(--border-subtle)]">
+        <GlowCard className="p-5">
           <h4 className="text-xs font-semibold text-[var(--text-secondary)] mb-2.5">
             Verified baseline indicators
           </h4>
           <ul className="space-y-1.5">
             {safetyFactors.map((safeText, idx) => (
               <li key={idx} className="flex items-center gap-2 text-xs text-[var(--text-secondary)]">
-                <CheckCircle2 className="h-3.5 w-3.5 text-[var(--color-safe)] shrink-0" />
+                <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400 glow-icon-safe shrink-0" />
                 <span>{safeText}</span>
               </li>
             ))}
           </ul>
-        </div>
+        </GlowCard>
       )}
 
       {/* Recommended Action Card */}
-      <div
-        className={`surface-card p-5 border ${
+      <GlowCard
+        className={`p-5 ${
           status === "BLOCKED"
             ? "border-[var(--color-danger-border)] bg-[var(--color-danger-bg)]"
             : status === "CHALLENGE"
             ? "border-[var(--color-warning-border)] bg-[var(--color-warning-bg)]"
-            : "border-[var(--border-subtle)] bg-[var(--bg-card)]"
+            : ""
         }`}
       >
         <div className="flex items-center gap-3 mb-2">
           {status === "BLOCKED" ? (
-            <div className="h-8 w-8 rounded-lg bg-rose-500/20 border border-rose-500/30 flex items-center justify-center text-rose-400">
-              <Lock className="h-4 w-4" />
+            <div className="h-8 w-8 rounded-lg glow-badge-danger flex items-center justify-center">
+              <Lock className="h-4 w-4 glow-icon-danger" />
             </div>
           ) : status === "CHALLENGE" ? (
-            <div className="h-8 w-8 rounded-lg bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400">
-              <KeyRound className="h-4 w-4" />
+            <div className="h-8 w-8 rounded-lg glow-badge-warning flex items-center justify-center">
+              <KeyRound className="h-4 w-4 glow-icon-warning" />
             </div>
           ) : (
-            <div className="h-8 w-8 rounded-lg bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
-              <ShieldCheck className="h-4 w-4" />
+            <div className="h-8 w-8 rounded-lg glow-badge-safe flex items-center justify-center">
+              <ShieldCheck className="h-4 w-4 glow-icon-safe" />
             </div>
           )}
           <div>
@@ -135,7 +136,7 @@ export function ExplanationCard({
             </div>
           ))}
         </div>
-      </div>
+      </GlowCard>
 
     </div>
   );

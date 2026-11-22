@@ -15,19 +15,20 @@ export function Navbar({ activeTab, setActiveTab }: NavbarProps) {
         
         {/* Brand identity: Clean, confident, authoritative */}
         <div className="flex items-center gap-3">
-          <div className="h-9 w-9 rounded-lg bg-[var(--bg-card-raised)] border border-[var(--border-strong)] flex items-center justify-center text-[var(--accent-light)]">
-            <Shield className="h-5 w-5 stroke-[2]" />
+          <div
+            className="h-9 w-9 rounded-lg border flex items-center justify-center text-rose-400 logo-red-glow"
+            aria-label="FraudShield Sentinel Shield"
+          >
+            <Shield className="h-5 w-5 stroke-[2] logo-red-icon" />
           </div>
           <div>
-            <div className="flex items-center gap-2">
-              <span className="text-base font-bold tracking-tight text-white font-sans">
-                FraudShield
-              </span>
-              <span className="text-xs px-2 py-0.5 rounded-md font-medium bg-[var(--bg-card-subtle)] text-[var(--text-secondary)] border border-[var(--border-subtle)]">
-                v1.0
-              </span>
-            </div>
-            <p className="text-xs text-[var(--text-muted)] leading-none mt-0.5">
+            <span
+              className="text-base font-bold text-white block leading-tight tracking-wider"
+              style={{ fontFamily: "var(--font-display)" }}
+            >
+              FraudShield
+            </span>
+            <p className="text-xs text-[var(--text-muted)] leading-none mt-1">
               Payment security & risk analysis
             </p>
           </div>
@@ -39,9 +40,9 @@ export function Navbar({ activeTab, setActiveTab }: NavbarProps) {
             <button
               type="button"
               onClick={() => setActiveTab("single")}
-              className={`flex items-center gap-2 px-3.5 py-1.5 rounded-md text-xs font-medium transition-colors cursor-pointer ${
+              className={`flex items-center gap-2 px-3.5 py-1.5 rounded-md text-xs font-medium cursor-pointer ${
                 activeTab === "single"
-                  ? "bg-[var(--bg-card-raised)] text-white shadow-xs border border-[var(--border-strong)]"
+                  ? "glow-subcard-active text-white"
                   : "text-[var(--text-secondary)] hover:text-white hover:bg-[var(--bg-card-raised)]/50"
               }`}
             >
@@ -51,9 +52,9 @@ export function Navbar({ activeTab, setActiveTab }: NavbarProps) {
             <button
               type="button"
               onClick={() => setActiveTab("statement")}
-              className={`flex items-center gap-2 px-3.5 py-1.5 rounded-md text-xs font-medium transition-colors cursor-pointer ${
+              className={`flex items-center gap-2 px-3.5 py-1.5 rounded-md text-xs font-medium cursor-pointer ${
                 activeTab === "statement"
-                  ? "bg-[var(--bg-card-raised)] text-white shadow-xs border border-[var(--border-strong)]"
+                  ? "glow-subcard-active text-white"
                   : "text-[var(--text-secondary)] hover:text-white hover:bg-[var(--bg-card-raised)]/50"
               }`}
             >
@@ -63,9 +64,9 @@ export function Navbar({ activeTab, setActiveTab }: NavbarProps) {
           </div>
         </nav>
 
-        {/* Protection state badge: quiet, professional, no pinging animations */}
-        <div className="hidden md:flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--color-safe-bg)] border border-[var(--color-safe-border)]">
-          <span className="h-2 w-2 rounded-full bg-[var(--color-safe)]" />
+        {/* Protection state badge */}
+        <div className="hidden md:flex items-center gap-2 px-3 py-1 rounded-full glow-pill-safe">
+          <span className="h-2 w-2 rounded-full bg-[var(--color-safe)] glow-icon-safe" />
           <span className="text-xs font-medium text-[var(--color-safe)]">
             System active
           </span>

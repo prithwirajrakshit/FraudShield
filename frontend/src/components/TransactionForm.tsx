@@ -42,7 +42,7 @@ export function TransactionForm({
   ];
 
   return (
-    <div className="surface-card p-6 border border-[var(--border-subtle)] space-y-6">
+    <div className="space-y-6">
       
       {/* Preset Scenarios */}
       <div>
@@ -53,31 +53,38 @@ export function TransactionForm({
           <span className="text-xs text-[var(--text-muted)]">Click to load</span>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          {scenarios.map((sc) => (
-            <button
-              key={sc.id}
-              type="button"
-              onClick={() => setFormData(sc.data)}
-              className="text-left p-3 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-card-raised)] hover:border-[var(--border-strong)] hover:bg-[var(--bg-card-subtle)] transition-colors cursor-pointer"
-            >
-              <div className="flex items-center justify-between gap-1">
-                <span className="text-xs font-medium text-white truncate">
-                  {sc.name}
-                </span>
-                <span className="text-xs font-mono font-semibold text-[var(--accent-light)] shrink-0">
-                  ₹{sc.data.amount}
-                </span>
-              </div>
-              <p className="text-xs text-[var(--text-muted)] truncate mt-1">
-                {sc.description}
-              </p>
-            </button>
-          ))}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+          {scenarios.map((sc) => {
+            const isSelected =
+              formData.amount === sc.data.amount &&
+              formData.merchant_category === sc.data.merchant_category;
+            return (
+              <button
+                key={sc.id}
+                type="button"
+                onClick={() => setFormData(sc.data)}
+                className={`text-left p-3.5 rounded-xl cursor-pointer ${
+                  isSelected ? "glow-subcard-active" : "glow-subcard"
+                }`}
+              >
+                <div className="flex items-center justify-between gap-1">
+                  <span className="text-xs font-semibold text-white truncate">
+                    {sc.name}
+                  </span>
+                  <span className="text-xs font-mono font-bold text-sky-300 shrink-0">
+                    ₹{sc.data.amount}
+                  </span>
+                </div>
+                <p className="text-xs text-[var(--text-muted)] truncate mt-1">
+                  {sc.description}
+                </p>
+              </button>
+            );
+          })}
         </div>
       </div>
 
-      <div className="h-px bg-[var(--border-subtle)]" />
+      <div className="h-px bg-gradient-to-r from-transparent via-sky-500/30 to-transparent" />
 
       {/* Main Form Fields */}
       <div className="space-y-4">
@@ -87,8 +94,8 @@ export function TransactionForm({
           <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1.5">
             Transaction amount (₹ INR)
           </label>
-          <div className="relative rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-card-raised)] focus-within:border-[var(--accent-light)] transition-colors">
-            <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[var(--accent-light)] font-mono font-bold text-base">
+          <div className="relative rounded-xl glow-input">
+            <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-sky-400 font-mono font-bold text-base">
               ₹
             </span>
             <input
@@ -96,7 +103,7 @@ export function TransactionForm({
               step="0.01"
               value={formData.amount === 0 ? "" : formData.amount}
               onChange={(e) => setFormData({ ...formData, amount: parseFloat(e.target.value) || 0 })}
-              className="w-full pl-8 pr-4 py-2.5 text-lg font-bold font-mono text-white bg-transparent rounded-lg focus:outline-hidden"
+              className="w-full pl-8 pr-4 py-2.5 text-lg font-bold font-mono text-white bg-transparent rounded-xl focus:outline-hidden"
               placeholder="0.00"
             />
           </div>
@@ -108,7 +115,7 @@ export function TransactionForm({
                 key={amt}
                 type="button"
                 onClick={() => setFormData({ ...formData, amount: amt })}
-                className="text-xs px-2.5 py-1 rounded-md bg-[var(--bg-card-raised)] border border-[var(--border-subtle)] hover:border-[var(--border-strong)] text-[var(--text-secondary)] hover:text-white font-mono transition-colors cursor-pointer"
+                className="text-xs px-2.5 py-1 rounded-md glow-pill-cyan text-[var(--text-secondary)] hover:text-white font-mono cursor-pointer"
               >
                 ₹{amt}
               </button>
@@ -126,8 +133,8 @@ export function TransactionForm({
               type="text"
               value={formData.merchant_name || ""}
               onChange={(e) => setFormData({ ...formData, merchant_name: e.target.value })}
-              className="w-full px-3 py-2 text-xs rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-card-raised)] text-white focus:border-[var(--accent-light)] focus:outline-hidden"
-              placeholder="e.g. Apex Electronics"
+              className="w-full px-3 py-2 text-xs rounded-lg glow-input text-white placeholder-[var(--text-muted)] focus:outline-hidden"
+              placeholder="e.g. Corner Bakery & Coffee"
             />
           </div>
 
@@ -138,7 +145,7 @@ export function TransactionForm({
             <select
               value={formData.merchant_category}
               onChange={(e) => setFormData({ ...formData, merchant_category: e.target.value })}
-              className="w-full px-3 py-2 text-xs rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-card-raised)] text-white focus:border-[var(--accent-light)] focus:outline-hidden cursor-pointer"
+              className="w-full px-3 py-2 text-xs rounded-lg glow-input text-white focus:outline-hidden cursor-pointer"
             >
               {categories.map((c) => (
                 <option key={c.value} value={c.value} className="bg-slate-900 text-white">
@@ -155,20 +162,23 @@ export function TransactionForm({
             Payment channel
           </label>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-            {channels.map((ch) => (
-              <button
-                key={ch.value}
-                type="button"
-                onClick={() => setFormData({ ...formData, channel: ch.value })}
-                className={`py-2 px-2.5 text-xs font-medium rounded-lg border text-center transition-colors cursor-pointer ${
-                  formData.channel === ch.value
-                    ? "bg-[var(--accent-subtle)] border-[var(--accent-light)] text-[var(--accent-light)] font-semibold"
-                    : "border-[var(--border-subtle)] bg-[var(--bg-card-raised)] text-[var(--text-secondary)] hover:text-white hover:border-[var(--border-strong)]"
-                }`}
-              >
-                {ch.label}
-              </button>
-            ))}
+            {channels.map((ch) => {
+              const isSelected = formData.channel === ch.value;
+              return (
+                <button
+                  key={ch.value}
+                  type="button"
+                  onClick={() => setFormData({ ...formData, channel: ch.value })}
+                  className={`py-2 px-2.5 text-xs font-medium rounded-lg text-center cursor-pointer ${
+                    isSelected
+                      ? "glow-subcard-active text-sky-300 font-semibold"
+                      : "glow-subcard text-[var(--text-secondary)] hover:text-white"
+                  }`}
+                >
+                  {ch.label}
+                </button>
+              );
+            })}
           </div>
         </div>
 
@@ -180,9 +190,9 @@ export function TransactionForm({
           <div className="space-y-2">
             
             {/* Foreign Origin */}
-            <label className="flex items-center justify-between p-3 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-card-raised)] hover:border-[var(--border-strong)] cursor-pointer transition-colors">
+            <label className="flex items-center justify-between p-3 rounded-lg glow-subcard cursor-pointer">
               <div className="flex items-center gap-2.5">
-                <Globe className="h-4 w-4 text-[var(--text-muted)]" />
+                <Globe className="h-4 w-4 text-sky-400" />
                 <span className="text-xs text-[var(--text-secondary)]">
                   Cross-border / foreign IP address
                 </span>
@@ -191,14 +201,14 @@ export function TransactionForm({
                 type="checkbox"
                 checked={formData.is_foreign}
                 onChange={(e) => setFormData({ ...formData, is_foreign: e.target.checked })}
-                className="h-4 w-4 rounded-sm border-slate-700 bg-slate-900 text-[var(--accent-primary)] focus:ring-[var(--accent-light)] cursor-pointer accent-[var(--accent-primary)]"
+                className="h-4 w-4 rounded-sm border-sky-400/50 bg-slate-900 text-sky-500 focus:ring-sky-400 cursor-pointer accent-sky-400"
               />
             </label>
 
             {/* Night Time */}
-            <label className="flex items-center justify-between p-3 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-card-raised)] hover:border-[var(--border-strong)] cursor-pointer transition-colors">
+            <label className="flex items-center justify-between p-3 rounded-lg glow-subcard cursor-pointer">
               <div className="flex items-center gap-2.5">
-                <Moon className="h-4 w-4 text-[var(--text-muted)]" />
+                <Moon className="h-4 w-4 text-sky-400" />
                 <span className="text-xs text-[var(--text-secondary)]">
                   Off-peak hours (1:00 AM – 5:00 AM)
                 </span>
@@ -207,14 +217,14 @@ export function TransactionForm({
                 type="checkbox"
                 checked={formData.is_night_time}
                 onChange={(e) => setFormData({ ...formData, is_night_time: e.target.checked })}
-                className="h-4 w-4 rounded-sm border-slate-700 bg-slate-900 text-[var(--accent-primary)] focus:ring-[var(--accent-light)] cursor-pointer accent-[var(--accent-primary)]"
+                className="h-4 w-4 rounded-sm border-sky-400/50 bg-slate-900 text-sky-500 focus:ring-sky-400 cursor-pointer accent-sky-400"
               />
             </label>
 
             {/* Device Trust */}
-            <label className="flex items-center justify-between p-3 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-card-raised)] hover:border-[var(--border-strong)] cursor-pointer transition-colors">
+            <label className="flex items-center justify-between p-3 rounded-lg glow-subcard cursor-pointer">
               <div className="flex items-center gap-2.5">
-                <Smartphone className="h-4 w-4 text-[var(--text-muted)]" />
+                <Smartphone className="h-4 w-4 text-sky-400" />
                 <span className="text-xs text-[var(--text-secondary)]">
                   Recognized & trusted device
                 </span>
@@ -223,7 +233,7 @@ export function TransactionForm({
                 type="checkbox"
                 checked={formData.device_trusted}
                 onChange={(e) => setFormData({ ...formData, device_trusted: e.target.checked })}
-                className="h-4 w-4 rounded-sm border-slate-700 bg-slate-900 text-[var(--accent-primary)] focus:ring-[var(--accent-light)] cursor-pointer accent-[var(--accent-primary)]"
+                className="h-4 w-4 rounded-sm border-sky-400/50 bg-slate-900 text-sky-500 focus:ring-sky-400 cursor-pointer accent-sky-400"
               />
             </label>
 
@@ -231,14 +241,14 @@ export function TransactionForm({
         </div>
 
         {/* Cardholder Baseline Average Slider */}
-        <div className="p-3.5 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-card-raised)]">
+        <div className="p-3.5 rounded-lg glow-subcard">
           <div className="flex justify-between items-center mb-2">
             <span className="text-xs font-medium text-[var(--text-secondary)] flex items-center gap-1.5">
-              <SlidersHorizontal className="h-3.5 w-3.5 text-[var(--text-muted)]" />
+              <SlidersHorizontal className="h-3.5 w-3.5 text-sky-400" />
               <span>Cardholder average spend</span>
             </span>
-            <div className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-[var(--bg-card-subtle)] border border-[var(--border-subtle)]">
-              <span className="text-xs font-mono font-semibold text-[var(--accent-light)]">₹</span>
+            <div className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-[var(--bg-card-subtle)] border border-sky-500/40">
+              <span className="text-xs font-mono font-semibold text-sky-400">₹</span>
               <input
                 type="number"
                 min="1"
@@ -256,28 +266,30 @@ export function TransactionForm({
             step="5"
             value={formData.user_avg_amount}
             onChange={(e) => setFormData({ ...formData, user_avg_amount: parseFloat(e.target.value) })}
-            className="w-full accent-[var(--accent-primary)] cursor-pointer bg-slate-800 rounded-lg"
+            className="w-full accent-sky-400 cursor-pointer bg-slate-800 rounded-lg"
           />
         </div>
 
       </div>
 
-      {/* Primary Action Button */}
+      {/* Primary Action Button with Tokenized Glowing Cyber Treatment */}
       <button
         type="button"
         onClick={onCheck}
         disabled={isLoading || formData.amount <= 0}
-        className="w-full py-3 px-4 rounded-lg bg-[var(--accent-primary)] hover:bg-[var(--accent-hover)] disabled:opacity-50 text-white font-medium text-sm transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-xs border border-[var(--accent-light)]/20"
+        className="w-full py-3 px-4 rounded-lg glow-btn-primary disabled:opacity-50 text-white font-semibold text-sm flex items-center justify-center gap-2 cursor-pointer whitespace-nowrap active:scale-[0.99]"
       >
         {isLoading ? (
           <>
-            <RefreshCw className="h-4 w-4 animate-spin text-white" />
-            <span>Evaluating transaction...</span>
+            <RefreshCw className="h-4 w-4 motion-safe:animate-spin text-white glow-icon-cyber" />
+            <span>Evaluating transaction…</span>
           </>
         ) : (
           <>
-            <ShieldCheck className="h-4 w-4 text-white" />
-            <span>Check transaction risk</span>
+            <ShieldCheck className="h-4 w-4 text-white glow-icon-cyber" />
+            <span className="font-display text-xs tracking-wide">
+              Check transaction risk
+            </span>
           </>
         )}
       </button>

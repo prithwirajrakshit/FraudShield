@@ -30,6 +30,7 @@ import {
 } from "lucide-react-native";
 import { uploadStatement, StatementScanResponse } from "../lib/api";
 import { theme } from "../styles/theme";
+import { GlowCard } from "./GlowCard";
 
 export function StatementScreen() {
   const [selectedFile, setSelectedFile] = useState<{ uri: string; name: string; mimeType?: string } | null>(null);
@@ -134,7 +135,7 @@ export function StatementScreen() {
       <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer} showsVerticalScrollIndicator={false}>
       
       {/* Upload Box */}
-      <View style={styles.uploadCard}>
+      <GlowCard style={styles.uploadCard}>
         <View style={styles.headerRow}>
           <FileText size={18} color={theme.colors.cyan} />
           <Text style={styles.cardTitle}>Universal Bank Statement Scanner</Text>
@@ -244,7 +245,7 @@ export function StatementScreen() {
             </>
           )}
         </Pressable>
-      </View>
+      </GlowCard>
 
       {/* Telemetry Results Section */}
       {scanResult && (
@@ -253,38 +254,38 @@ export function StatementScreen() {
           {/* KPI Grid */}
           <View style={styles.kpiGrid}>
             
-            <View style={styles.kpiCard}>
+            <GlowCard style={styles.kpiCard}>
               <Text style={styles.kpiLabel}>Scanned Volume</Text>
               <Text style={styles.kpiVal}>{scanResult.summary.total_transactions}</Text>
               <Text style={styles.kpiSub}>₹{scanResult.summary.total_volume_dollars.toLocaleString()}</Text>
-            </View>
+            </GlowCard>
 
-            <View style={[styles.kpiCard, { borderColor: "rgba(16, 185, 129, 0.4)" }]}>
+            <GlowCard style={[styles.kpiCard, { borderColor: "rgba(16, 185, 129, 0.4)" }]}>
               <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
                 <CheckCircle2 size={11} color={theme.colors.emerald} />
                 <Text style={[styles.kpiLabel, { color: theme.colors.emerald }]}>Approved</Text>
               </View>
               <Text style={[styles.kpiVal, { color: theme.colors.emeraldLight }]}>{scanResult.summary.approved_count}</Text>
               <Text style={styles.kpiSub}>Cleared Safe</Text>
-            </View>
+            </GlowCard>
 
-            <View style={[styles.kpiCard, { borderColor: "rgba(245, 158, 11, 0.4)" }]}>
+            <GlowCard style={[styles.kpiCard, { borderColor: "rgba(245, 158, 11, 0.4)" }]}>
               <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
                 <AlertTriangle size={11} color={theme.colors.amber} />
                 <Text style={[styles.kpiLabel, { color: theme.colors.amber }]}>Challenged</Text>
               </View>
               <Text style={[styles.kpiVal, { color: theme.colors.amberLight }]}>{scanResult.summary.challenged_count}</Text>
               <Text style={styles.kpiSub}>OTP 2FA</Text>
-            </View>
+            </GlowCard>
 
-            <View style={[styles.kpiCard, { borderColor: "rgba(244, 63, 94, 0.4)" }]}>
+            <GlowCard style={[styles.kpiCard, { borderColor: "rgba(244, 63, 94, 0.4)" }]}>
               <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
                 <ShieldAlert size={11} color={theme.colors.rose} />
                 <Text style={[styles.kpiLabel, { color: theme.colors.rose }]}>Blocked</Text>
               </View>
               <Text style={[styles.kpiVal, { color: theme.colors.roseLight }]}>{scanResult.summary.blocked_count}</Text>
               <Text style={styles.kpiSub}>₹{scanResult.summary.flagged_volume_dollars.toLocaleString()}</Text>
-            </View>
+            </GlowCard>
 
           </View>
 
@@ -316,7 +317,7 @@ export function StatementScreen() {
             const isChallenge = tx.status === "CHALLENGE";
 
             return (
-              <View key={tx.id} style={styles.txCard}>
+              <GlowCard key={tx.id} style={styles.txCard}>
                 <View style={styles.txTopRow}>
                   <Text style={styles.txDate}>{tx.date}</Text>
                   <View style={[
@@ -338,7 +339,7 @@ export function StatementScreen() {
                   <Text style={styles.txAmt}>₹{tx.amount.toFixed(2)}</Text>
                   <Text style={styles.txReason} numberOfLines={1}>{tx.top_reason}</Text>
                 </View>
-              </View>
+              </GlowCard>
             );
           })}
 
